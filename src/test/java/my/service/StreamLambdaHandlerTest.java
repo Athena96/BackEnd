@@ -13,7 +13,7 @@ import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import my.service.controller.Ping;
+import my.service.model.Ping;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

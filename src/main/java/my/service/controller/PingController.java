@@ -3,6 +3,8 @@ package my.service.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import my.service.model.Ping;
+
 import java.util.HashMap;
 import java.util.Map;
 
