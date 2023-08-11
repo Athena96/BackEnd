@@ -4,6 +4,8 @@ import java.util.List;
 
 
 public record Recurring(
+        String id,
+        String simulationId,
         String title,
         String email,
         Integer startAge,
