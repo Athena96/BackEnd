@@ -1,5 +1,7 @@
 package my.service.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
@@ -7,6 +9,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequ
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
+@CrossOrigin(origins = "*")
 public class BaseController {
 
     protected DynamoDbClient dynamoDbClient;
