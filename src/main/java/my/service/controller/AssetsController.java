@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import my.service.model.Assets;
+import my.service.services.StockService;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class AssetsController extends BaseController {
 
     @RequestMapping(path = "/assets", method = RequestMethod.GET)
-    public List<Assets> listAssets(@RequestHeader("Authorization") String token) {
+    public List<Assets> listAssets(@RequestHeader("Authorization") String token) throws Exception {
         System.out.println("AssetsController");
         String email = getUserEmail(token);
 
@@ -45,8 +46,11 @@ public class AssetsController extends BaseController {
             Integer hasIndexData = item.get("hasIndexData").n() == null ? null
                     : Integer.parseInt(item.get("hasIndexData").n());
 
-            Assets asset = new Assets(id, simulationId, user, ticker, quantity, hasIndexData);
+            System.out.println("getPriceForStock -> " + ticker);
+            Double price = StockService.getPriceForStock(ticker);
+            System.out.println("price -> " + price);
 
+            Assets asset = new Assets(id, simulationId, user, ticker, quantity, price, hasIndexData);
             listOfAssets.add(asset);
         }
 
