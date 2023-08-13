@@ -44,7 +44,7 @@ public class RecurringController extends BaseController {
             String email = item.get("email").s();
             Integer startAge = Integer.parseInt(item.get("startAge").n());
             Integer endAge = Integer.parseInt(item.get("endAge").n());
-            ChargeType chargeType = item.get("chargeType").s() == "EXPENSE" ? ChargeType.EXPENSE : ChargeType.INCOME;
+            ChargeType chargeType = ("EXPENSE".equals(item.get("chargeType").s())) ? ChargeType.EXPENSE : ChargeType.INCOME;
 
             List<LineItem> lineItems = new ArrayList<>();
             for (AttributeValue lineItem : item.get("lineItems").l()) {

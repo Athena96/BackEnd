@@ -43,7 +43,7 @@ public class OneTimeController extends BaseController {
             String simulationId = item.get("simulationId").s();
             String title = item.get("title").s();
             Integer age = item.get("age").n() == null ? null : Integer.parseInt(item.get("age").n());
-            ChargeType type = item.get("chargeType").s() == "EXPENSE" ? ChargeType.EXPENSE : ChargeType.INCOME;
+            ChargeType type = ("EXPENSE".equals(item.get("chargeType").s())) ? ChargeType.EXPENSE : ChargeType.INCOME;
 
             Map<String, AttributeValue> lineItemObj = item.get("lineItem").m();
             String lineItemTitle = lineItemObj.get("title").s();
