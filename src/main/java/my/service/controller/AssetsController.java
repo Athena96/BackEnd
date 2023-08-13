@@ -45,11 +45,13 @@ public class AssetsController extends BaseController {
             Double quantity = item.get("quantity").n() == null ? null : Double.parseDouble(item.get("quantity").n());
             Integer hasIndexData = item.get("hasIndexData").n() == null ? null
                     : Integer.parseInt(item.get("hasIndexData").n());
-
-            System.out.println("getPriceForStock -> " + ticker);
-            Double price = StockService.getPriceForStock(ticker);
-            System.out.println("price -> " + price);
-
+            Double price = 0.0;
+            if (hasIndexData == 1) {
+                price = StockService.getPriceForStock(ticker);
+                System.out.println("price -> " + price);
+            } else {
+                price = 1.0;
+            }
             Assets asset = new Assets(id, simulationId, user, ticker, quantity, price, hasIndexData);
             listOfAssets.add(asset);
         }
