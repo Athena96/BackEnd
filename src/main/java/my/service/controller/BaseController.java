@@ -11,24 +11,19 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @CrossOrigin(origins = "*")
 public class BaseController {
-
-    protected DynamoDbClient dynamoDbClient;
-    protected CognitoIdentityProviderClient cognitoClient;
+    protected static final DynamoDbClient dynamoDbClient = DynamoDbClient.builder()
+            .region(Region.US_EAST_1)
+            .build();
+    protected static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
+            .region(Region.US_EAST_1) // Change to your Cognito region
+            .build();
 
     public BaseController() {
-        dynamoDbClient = DynamoDbClient.builder()
-                .region(Region.US_EAST_1) // Change to your DynamoDB region
-                .build();
-
-        cognitoClient = CognitoIdentityProviderClient.builder()
-                .region(Region.US_EAST_1) // Change to your Cognito region
-                .build();
+        System.out.println("BaseController");
     }
 
     protected String getUserEmail(String token) {
-
         try {
-
             GetUserRequest getUserRequest = GetUserRequest.builder()
                     .accessToken(token)
                     .build();

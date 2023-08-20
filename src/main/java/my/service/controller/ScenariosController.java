@@ -9,6 +9,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +19,13 @@ public class ScenariosController extends BaseController {
 
     @RequestMapping(path = "/listScenarios", method = RequestMethod.GET)
     public List<Scenario> listScenarios(@RequestHeader("Authorization") String token) throws Exception {
+        Date startTime = new Date();
         System.out.println("ScenariosController");
+
         String email = getUserEmail(token);
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(System.getenv("SCENARIO_TABLE"))
-                .indexName("UserEmailIndex")
                 .keyConditionExpression("email = :emailValue")
                 .expressionAttributeValues(Map.of(":emailValue", AttributeValue.builder().s(email).build()))
                 .build();
@@ -47,6 +49,9 @@ public class ScenariosController extends BaseController {
         }
 
         System.out.println(listOfScenarios);
+
+        Date endTime = new Date();
+        System.out.println("ScenariosController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
 
         return listOfScenarios;
     }

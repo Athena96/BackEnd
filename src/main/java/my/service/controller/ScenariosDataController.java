@@ -11,7 +11,7 @@ import my.service.model.Response.ScenarioDataResponse;
 import my.service.model.dynamodb.Assets;
 import my.service.model.dynamodb.OneTime;
 import my.service.model.dynamodb.Recurring;
-
+import my.service.model.dynamodb.Scenario;
 import my.service.model.dynamodb.Settings;
 import my.service.services.StockService;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -21,6 +21,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,15 +30,41 @@ import java.util.Map;
 public class ScenariosDataController extends BaseController {
 
         @RequestMapping(path = "/getScenarioData", method = RequestMethod.GET)
-        public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String token,
-                        @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
+        public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String token) throws Exception {
+
+                Date startTime = new Date();
                 System.out.println("DataController");
-                System.out.println("scenarioId");
-                System.out.println(scenarioId);
 
                 String email = getUserEmail(token);
-                String scenarioDataId = email + "#" + scenarioId;
 
+                Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+                expressionAttributeValues.put(":emailValue", AttributeValue.builder().s(email).build());
+                expressionAttributeValues.put(":activeValue", AttributeValue.builder().n("1").build());
+                QueryRequest scenarioqueryRequest = QueryRequest.builder()
+                                .tableName(System.getenv("SCENARIO_TABLE"))
+                                .keyConditionExpression("email = :emailValue and active = :activeValue")
+                                .expressionAttributeValues(expressionAttributeValues)
+                                .build();
+
+                QueryResponse scenarioqueryResponse = dynamoDbClient.query(scenarioqueryRequest);
+
+                Scenario activeScenario = null;
+                for (Map<String, AttributeValue> item : scenarioqueryResponse.items()) {
+                        System.out.println(item.get("active"));
+                        if (item.get("active").n() != null && Integer.parseInt(item.get("active").n()) == 1) {
+                                String sid = item.get("scenarioId").s();
+                                String title = item.get("title").s();
+                                String userEmail = item.get("email").s();
+                                Integer active = item.get("active").n() == null ? 0
+                                                : Integer.parseInt(item.get("active").n());
+                                activeScenario = new Scenario(userEmail, active, sid, title);
+                        }
+                }
+
+                String activeScenarioID = activeScenario.scenarioId();
+                System.out.println("Active Scenario: " + activeScenarioID);
+                String scenarioDataId = email + "#" + activeScenarioID;
+                System.out.println("PK: " + scenarioDataId);
                 QueryRequest queryRequest = QueryRequest.builder()
                                 .tableName(System.getenv("DATA_TABLE"))
                                 .keyConditionExpression(
@@ -112,8 +139,12 @@ public class ScenariosDataController extends BaseController {
 
                                         Double price = 0.0;
                                         if (hasIndexData == 1) {
+                                                Date startTime_stock = new Date();
                                                 price = StockService.getPriceForStock(ticker);
-                                                System.out.println("price -> " + price);
+                                                Date endTime_stock = new Date();
+                                                System.out.println("StockService Load Time: "
+                                                                + (endTime_stock.getTime() - startTime_stock.getTime())
+                                                                + "ms");
                                         } else {
                                                 System.out.println("price quantity -> " + price);
 
@@ -156,6 +187,10 @@ public class ScenariosDataController extends BaseController {
                                 listOfRecurring, listOfOneTime);
 
                 System.out.println(scenarioDataResponse);
+
+                Date endTime = new Date();
+                System.out.println("ScenariosDataController Load Time: " + (endTime.getTime() - startTime.getTime())
+                                + "ms");
 
                 return scenarioDataResponse;
         }

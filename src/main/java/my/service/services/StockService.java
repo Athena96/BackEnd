@@ -12,12 +12,13 @@ import org.json.JSONObject;
 
 public class StockService {
 
+    private static final CloseableHttpClient httpClient = HttpClients.createDefault();
+
     public static Double getPriceForStock(String ticker) throws Exception {
         System.out.println("getPriceForStock");
         String url = "https://query2.finance.yahoo.com/v8/finance/chart/" + ticker + "?interval=1d&range=1d";
         System.out.println("url " + url);
 
-        CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
 
         try {
