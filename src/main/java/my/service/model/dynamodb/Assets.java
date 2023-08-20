@@ -1,9 +1,11 @@
-package my.service.model;
+package my.service.model.dynamodb;
+
+import my.service.model.DataType;
 
 public record Assets(
+        String scenarioDataId,
+        DataType type,
         String id,
-        String simulationId,
-        String email,
         String ticker,
         Double quantity,
         Double price,
