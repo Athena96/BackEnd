@@ -1,5 +1,7 @@
 package my.service.controller;
 
+import java.util.Date;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import software.amazon.awssdk.regions.Region;
@@ -11,15 +13,21 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 @CrossOrigin(origins = "*")
 public class BaseController {
-    protected static final DynamoDbClient dynamoDbClient = DynamoDbClient.builder()
-            .region(Region.US_EAST_1)
-            .build();
-    protected static final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()
-            .region(Region.US_EAST_1) // Change to your Cognito region
-            .build();
+    protected final DynamoDbClient dynamoDbClient;
+    protected final CognitoIdentityProviderClient cognitoClient;
 
     public BaseController() {
         System.out.println("BaseController");
+        Date startTime = new Date();
+
+        dynamoDbClient = DynamoDbClient.builder()
+                .region(Region.US_EAST_1)
+                .build();
+        cognitoClient = CognitoIdentityProviderClient.builder()
+                .region(Region.US_EAST_1) // Change to your Cognito region
+                .build();
+        Date endTime = new Date();
+        System.out.println("BaseController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
     }
 
     protected String getUserEmail(String token) {
