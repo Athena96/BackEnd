@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import my.service.services.DDBService;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
@@ -15,6 +16,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class BaseController {
     protected final DynamoDbClient dynamoDbClient;
     protected final CognitoIdentityProviderClient cognitoClient;
+    protected final DDBService ddbService;
 
     public BaseController() {
         System.out.println("BaseController");
@@ -26,6 +28,7 @@ public class BaseController {
         cognitoClient = CognitoIdentityProviderClient.builder()
                 .region(Region.US_EAST_1) // Change to your Cognito region
                 .build();
+        ddbService = new DDBService(dynamoDbClient);
         Date endTime = new Date();
         System.out.println("BaseController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
     }

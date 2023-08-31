@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class StockService {
 
-    public static Double getPriceForStock(String ticker) throws Exception {
+    public static Double getPriceForStock(String ticker) {
         System.out.println("getPriceForStock");
         String url = "https://query2.finance.yahoo.com/v8/finance/chart/" + ticker + "?interval=1d&range=1d";
         System.out.println("url " + url);
@@ -37,8 +37,7 @@ public class StockService {
             throw new Exception("No entity found");
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("No entity found");
-
+            return 0.0;
         } finally {
             try {
                 httpClient.close();
