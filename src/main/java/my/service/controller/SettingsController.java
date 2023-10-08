@@ -22,6 +22,7 @@ public class SettingsController extends BaseController {
     public Settings getSettings(@RequestHeader("Authorization") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
         System.out.println("SettingsController");
+        System.out.println("token: " + token);
 
         Date startTime = new Date();
 

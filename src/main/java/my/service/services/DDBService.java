@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import my.service.model.IDeserializable;
+import my.service.model.ISerializable;
 
 public class DDBService {
 
@@ -19,6 +20,21 @@ public class DDBService {
 
     public DDBService(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
+    }
+
+    public <T extends ISerializable<T>> void deleteItem(Class<T> clazz, String email, String scenarioDataId,
+            String type) {
+        System.out.println("DDBService.deleteItem()");
+        dynamoDbClient.deleteItem(builder -> builder.tableName(System.getenv("DATA_TABLE"))
+                .key(Map.of("scenarioDataId", AttributeValue.builder().s(scenarioDataId).build(),
+                        "type", AttributeValue.builder().s(type).build())));
+    }
+
+    public <T extends ISerializable<T>> void putItem(Class<T> clazz, String email, String scenarioId, T item) {
+        System.out.println("DDBService.putItem()");
+        Map<String, AttributeValue> serializedItem = item.serializable(email, scenarioId, item);
+        dynamoDbClient.putItem(builder -> builder.tableName(System.getenv("DATA_TABLE"))
+                .item(serializedItem));
     }
 
     public <T extends IDeserializable<T>> List<T> queryTypesForUser(Class<T> clazz, String email, String scenarioId)
