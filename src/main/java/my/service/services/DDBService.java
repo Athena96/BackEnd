@@ -25,15 +25,15 @@ public class DDBService {
     public <T extends ISerializable<T>> void deleteItem(Class<T> clazz, String email, String scenarioDataId,
             String type) {
         System.out.println("DDBService.deleteItem()");
-        dynamoDbClient.deleteItem(builder -> builder.tableName(System.getenv("DATA_TABLE"))
+        dynamoDbClient.deleteItem(builder -> builder.tableName(DDBTables.getDataTableName())
                 .key(Map.of("scenarioDataId", AttributeValue.builder().s(scenarioDataId).build(),
                         "type", AttributeValue.builder().s(type).build())));
     }
 
-    public <T extends ISerializable<T>> void putItem(Class<T> clazz, String email, String scenarioId, T item) {
-        System.out.println("DDBService.putItem()");
+    public <T extends ISerializable<T>> void putItem(Class<T> clazz, String table, String email, String scenarioId, T item) {
+        System.out.println("DDBService.putItem() in table: " + table + " for user: " + email + " and scenario: " + scenarioId);
         Map<String, AttributeValue> serializedItem = item.serializable(email, scenarioId, item);
-        dynamoDbClient.putItem(builder -> builder.tableName(System.getenv("DATA_TABLE"))
+        dynamoDbClient.putItem(builder -> builder.tableName(table)
                 .item(serializedItem));
     }
 
@@ -49,7 +49,7 @@ public class DDBService {
         expressionAttributeValues.put(":typeValue", AttributeValue.builder().s(type).build());
 
         QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(System.getenv("DATA_TABLE"))
+                .tableName(DDBTables.getDataTableName())
                 .keyConditionExpression(
                         "scenarioDataId = :emailScenarioIdValue and begins_with(#type, :typeValue)")
                 .expressionAttributeNames(Map.of("#type", "type"))

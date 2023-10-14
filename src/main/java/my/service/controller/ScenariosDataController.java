@@ -61,7 +61,7 @@ public class ScenariosDataController extends BaseController {
                         }
                 }
 
-                String activeScenarioID = activeScenario.scenarioId();
+                String activeScenarioID = activeScenario.scenarioId;
                 System.out.println("Active Scenario: " + activeScenarioID);
                 String scenarioDataId = email + "#" + activeScenarioID;
                 System.out.println("PK: " + scenarioDataId);

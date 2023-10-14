@@ -17,6 +17,7 @@ import my.service.model.Response.AddAssetResponse;
 import my.service.model.Response.DeleteAssetResponse;
 import my.service.model.Response.UpdateAssetResponse;
 import my.service.model.dynamodb.Assets;
+import my.service.services.DDBTables;
 
 import java.util.Date;
 import java.util.List;
@@ -69,7 +70,7 @@ public class AssetsController extends BaseController {
                 addAssetRequest.hasIndexData());
 
         try {
-            ddbService.putItem(Assets.class, email, scenarioId, asset);
+            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, scenarioId, asset);
             return new AddAssetResponse(true);
         } catch (Exception e) {
             System.out.println("Error in DDBService.addItem");
@@ -98,7 +99,7 @@ public class AssetsController extends BaseController {
                 updateAssetRequest.hasIndexData());
 
         try {
-            ddbService.putItem(Assets.class, email, scenarioId, asset);
+            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, scenarioId, asset);
             return new UpdateAssetResponse(true);
         } catch (Exception e) {
             System.out.println("Error in DDBService.putItem");
