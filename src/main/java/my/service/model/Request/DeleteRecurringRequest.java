@@ -1,5 +1,5 @@
 package my.service.model.Request;
 
-public class DeleteRecurringRequest {
+public record DeleteRecurringRequest(String scenarioDataId, String type) {
     
 }

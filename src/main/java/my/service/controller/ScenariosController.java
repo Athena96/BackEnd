@@ -3,8 +3,6 @@ package my.service.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import my.service.model.Response.AddAssetResponse;
-import my.service.model.dynamodb.Assets;
 import my.service.model.dynamodb.Scenario;
 import my.service.services.DDBTables;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;

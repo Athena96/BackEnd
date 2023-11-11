@@ -5,11 +5,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import my.service.model.ChargeType;
 import my.service.model.DataType;
-import my.service.model.LineItem;
 import my.service.model.Response.ScenarioDataResponse;
 
 import my.service.model.dynamodb.Assets;
-import my.service.model.dynamodb.OneTime;
 import my.service.model.dynamodb.Recurring;
 import my.service.model.dynamodb.Scenario;
 import my.service.model.dynamodb.Settings;
@@ -79,7 +77,6 @@ public class ScenariosDataController extends BaseController {
                 System.out.println(queryResponse);
 
                 List<Recurring> listOfRecurring = new ArrayList<>();
-                List<OneTime> listOfOneTime = new ArrayList<>();
                 List<Assets> listOfAssets = new ArrayList<>();
                 Settings settings = null;
 
@@ -90,7 +87,7 @@ public class ScenariosDataController extends BaseController {
                         System.out.println(item.get("type").s().split("#")[0]);
 
                         DataType dataType = DataType.valueOf(item.get("type").s().split("#")[0]);
-
+                        String typeString = item.get("type").s();
                         switch (dataType) {
                                 case Recurring:
                                         String recurringId = item.get("id").s();
@@ -100,34 +97,12 @@ public class ScenariosDataController extends BaseController {
                                         ChargeType chargeType = ("EXPENSE".equals(item.get("chargeType").s()))
                                                         ? ChargeType.EXPENSE
                                                         : ChargeType.INCOME;
-
-                                        List<LineItem> lineItemsList = new ArrayList<>();
-                                        for (AttributeValue lineItem : item.get("lineItems").l()) {
-                                                Map<String, AttributeValue> lineItemObj = lineItem.m();
-
-                                                String lineItemName = lineItemObj.get("title").s();
-                                                Double amount = Double.parseDouble(lineItemObj.get("amount").n());
-                                                LineItem line = new LineItem(lineItemName, amount);
-                                                lineItemsList.add(line);
-                                        }
-
-                                        Recurring recurring = new Recurring(scenarioDataId, dataType, recurringId,
-                                                        title, startAge, endAge, chargeType, lineItemsList);
-                                        listOfRecurring.add(recurring);
-                                        break;
-                                case OneTime:
-                                        String oneTimeId = item.get("id").s();
-                                        String oneTimeTitle = item.get("title").s();
-                                        Integer oneTimeAge = Integer.parseInt(item.get("age").n());
-                                        ChargeType oneTimeChargeType = ("EXPENSE".equals(item.get("chargeType").s()))
-                                                        ? ChargeType.EXPENSE
-                                                        : ChargeType.INCOME;
                                         Double amount = Double.parseDouble(item.get("amount").n());
 
-                                        OneTime oneTime = new OneTime(scenarioDataId, dataType, oneTimeId, oneTimeTitle,
-                                                        oneTimeAge, oneTimeChargeType,
-                                                        amount);
-                                        listOfOneTime.add(oneTime);
+
+                                        Recurring recurring = new Recurring(scenarioDataId, typeString, recurringId,
+                                                        title, startAge, endAge, chargeType, amount);
+                                        listOfRecurring.add(recurring);
                                         break;
                                 case Assets:
                                         String assetId = item.get("id").s();
@@ -150,8 +125,9 @@ public class ScenariosDataController extends BaseController {
 
                                                 price = Double.parseDouble(item.get("quantity").n());
                                         }
+                                        String type = "Assets" + "#" + assetId;
 
-                                        listOfAssets.add(new Assets(scenarioDataId, dataType, assetId, ticker, quantity,
+                                        listOfAssets.add(new Assets(scenarioDataId, type, assetId, ticker, quantity,
                                                         price, hasIndexData));
                                         break;
                                 case Settings:
@@ -184,7 +160,7 @@ public class ScenariosDataController extends BaseController {
                 }
 
                 ScenarioDataResponse scenarioDataResponse = new ScenarioDataResponse(settings, listOfAssets,
-                                listOfRecurring, listOfOneTime);
+                                listOfRecurring);
 
                 System.out.println(scenarioDataResponse);
 

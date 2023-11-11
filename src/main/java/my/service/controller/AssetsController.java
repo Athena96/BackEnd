@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import my.service.model.DataType;
 import my.service.model.Request.AddAssetRequest;
 import my.service.model.Request.DeleteAssetRequest;
 import my.service.model.Request.UpdateAssetRequest;
@@ -50,19 +49,19 @@ public class AssetsController extends BaseController {
 
     @RequestMapping(path = "/addAsset", method = RequestMethod.POST)
     public AddAssetResponse addAsset(@RequestHeader("Authorization") String token,
-            @RequestParam(name = "scenarioId", required = true) String scenarioId,
             @RequestBody AddAssetRequest addAssetRequest) throws Exception {
         System.out.println("AssetsController.addAsset()");
 
         String email = getUserEmail(token);
         System.out.println("email: " + email);
-        System.out.println("scenarioId: " + scenarioId);
+        System.out.println("scenarioId: " + addAssetRequest.scenarioId());
 
         String id = UUID.randomUUID().toString();
-        String scenarioDataId = email + "#" + scenarioId;
+        String scenarioDataId = email + "#" + addAssetRequest.scenarioId();
+        String type = "Assets" + "#" + id;
         Assets asset = new Assets(
                 scenarioDataId,
-                DataType.Assets,
+                type,
                 id,
                 addAssetRequest.ticker(),
                 addAssetRequest.quantity(),
@@ -70,7 +69,7 @@ public class AssetsController extends BaseController {
                 addAssetRequest.hasIndexData());
 
         try {
-            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, scenarioId, asset);
+            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, asset);
             return new AddAssetResponse(true);
         } catch (Exception e) {
             System.out.println("Error in DDBService.addItem");
@@ -81,25 +80,25 @@ public class AssetsController extends BaseController {
 
     @RequestMapping(path = "/updateAsset", method = RequestMethod.PUT)
     public UpdateAssetResponse updateAsset(@RequestHeader("Authorization") String token,
-            @RequestParam(name = "scenarioId", required = true) String scenarioId,
             @RequestBody UpdateAssetRequest updateAssetRequest) throws Exception {
         System.out.println("AssetsController.updateAsset()");
 
-        String email = getUserEmail(token);
+        String email = getUserEmail(token); // updateAssetRequest.scenarioDataId().split("#")[0];
         System.out.println("email: " + email);
-        System.out.println("scenarioId: " + scenarioId);
+        System.out.println("scenarioDataId: " + updateAssetRequest.scenarioDataId());
 
+        String id = updateAssetRequest.type().split("#")[1];
+        String scenarioId = updateAssetRequest.scenarioDataId().split("#")[1];
         Assets asset = new Assets(
                 updateAssetRequest.scenarioDataId(),
-                DataType.Assets,
-                updateAssetRequest.typeId(),
+                updateAssetRequest.type(),
+                id,
                 updateAssetRequest.ticker(),
                 updateAssetRequest.quantity(),
                 1.0,
                 updateAssetRequest.hasIndexData());
-
         try {
-            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, scenarioId, asset);
+            ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, asset);
             return new UpdateAssetResponse(true);
         } catch (Exception e) {
             System.out.println("Error in DDBService.putItem");
@@ -110,7 +109,6 @@ public class AssetsController extends BaseController {
 
     @RequestMapping(path = "/deleteAsset", method = RequestMethod.DELETE)
     public DeleteAssetResponse deleteAsset(@RequestHeader("Authorization") String token,
-            @RequestParam(name = "scenarioId", required = true) String scenarioId,
             @RequestBody DeleteAssetRequest deleteAssetRequest) throws Exception {
         System.out.println("AssetsController.deleteAsset()");
 

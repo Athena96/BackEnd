@@ -1,38 +1,35 @@
 package my.service.model.dynamodb;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-
 import my.service.model.ChargeType;
-import my.service.model.DataType;
-import my.service.model.LineItem;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import my.service.model.IDeserializable;
+import my.service.model.ISerializable;
 
-public class Recurring implements IDeserializable<Recurring> {
+public class Recurring implements IDeserializable<Recurring>, ISerializable<Recurring> {
 
         public String scenarioDataId;
-        public DataType type;
+        public String type;
         public String id;
         public String title;
         public Integer startAge;
         public Integer endAge;
         public ChargeType chargeType;
-        public List<LineItem> lineItems;
+        public Double amount;
 
         public Recurring() {
                 System.out.println("Recurring no args constructor");
         }
 
         public Recurring(String scenarioDataId,
-                        DataType type,
+                        String type,
                         String id,
                         String title,
                         Integer startAge,
                         Integer endAge,
                         ChargeType chargeType,
-                        List<LineItem> lineItems) {
+                        Double amount) {
                 this.scenarioDataId = scenarioDataId;
                 this.type = type;
                 this.id = id;
@@ -40,15 +37,14 @@ public class Recurring implements IDeserializable<Recurring> {
                 this.startAge = startAge;
                 this.endAge = endAge;
                 this.chargeType = chargeType;
-                this.lineItems = lineItems;
+                this.amount = amount;
         }
 
         @Override
         public Recurring deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
                 System.out.println("Recurring deserialize()");
-                DataType dataType = DataType.valueOf(item.get("type").s().split("#")[0]);
-
-                String scenarioDataId = email + "#" + scenarioId;
+                String scenarioDataId = item.get("scenarioDataId").s();
+                String type = item.get("type").s();
                 String recurringId = item.get("id").s();
                 String title = item.get("title").s();
                 Integer startAge = Integer.parseInt(item.get("startAge").n());
@@ -56,18 +52,23 @@ public class Recurring implements IDeserializable<Recurring> {
                 ChargeType chargeType = ("EXPENSE".equals(item.get("chargeType").s()))
                                 ? ChargeType.EXPENSE
                                 : ChargeType.INCOME;
+                Double amount = Double.parseDouble(item.get("amount").n());
+                return new Recurring(scenarioDataId, type, recurringId,
+                                title, startAge, endAge, chargeType, amount);
+        }
 
-                List<LineItem> lineItemsList = new ArrayList<>();
-                for (AttributeValue lineItem : item.get("lineItems").l()) {
-                        Map<String, AttributeValue> lineItemObj = lineItem.m();
-                        String lineItemName = lineItemObj.get("title").s();
-                        Double amount = Double.parseDouble(lineItemObj.get("amount").n());
-                        LineItem line = new LineItem(lineItemName, amount);
-                        lineItemsList.add(line);
-                }
-
-                return new Recurring(scenarioDataId, dataType, recurringId,
-                                title, startAge, endAge, chargeType, lineItemsList);
+        @Override
+        public Map<String, AttributeValue> serializable(String email, Recurring item) {
+                Map<String, AttributeValue> serializeditem = new HashMap<>();
+                serializeditem.put("scenarioDataId", AttributeValue.builder().s(item.scenarioDataId).build());
+                serializeditem.put("type", AttributeValue.builder().s(item.type).build());
+                serializeditem.put("id", AttributeValue.builder().s(item.id).build());
+                serializeditem.put("title", AttributeValue.builder().s(item.title).build());
+                serializeditem.put("startAge", AttributeValue.builder().n(item.startAge.toString()).build());
+                serializeditem.put("endAge", AttributeValue.builder().n(item.endAge.toString()).build());
+                serializeditem.put("chargeType", AttributeValue.builder().s(item.chargeType.toString()).build());
+                serializeditem.put("amount", AttributeValue.builder().n(item.amount.toString()).build());
+                return serializeditem;
         }
 
 }

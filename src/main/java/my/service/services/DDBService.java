@@ -30,9 +30,9 @@ public class DDBService {
                         "type", AttributeValue.builder().s(type).build())));
     }
 
-    public <T extends ISerializable<T>> void putItem(Class<T> clazz, String table, String email, String scenarioId, T item) {
-        System.out.println("DDBService.putItem() in table: " + table + " for user: " + email + " and scenario: " + scenarioId);
-        Map<String, AttributeValue> serializedItem = item.serializable(email, scenarioId, item);
+    public <T extends ISerializable<T>> void putItem(Class<T> clazz, String table, String email, T item) {
+        System.out.println("DDBService.putItem() in table: " + table + " for user: " + email);
+        Map<String, AttributeValue> serializedItem = item.serializable(email, item);
         dynamoDbClient.putItem(builder -> builder.tableName(table)
                 .item(serializedItem));
     }

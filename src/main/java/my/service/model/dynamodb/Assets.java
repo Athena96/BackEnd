@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import my.service.model.DataType;
 import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
 import my.service.services.StockService;
@@ -13,7 +12,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
 
         public String scenarioDataId;
-        public DataType type;
+        public String type;
         public String id;
         public String ticker;
         public Double quantity;
@@ -25,7 +24,7 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
         }
 
         public Assets(String scenarioDataId,
-                        DataType type,
+                        String type,
                         String id,
                         String ticker,
                         Double quantity,
@@ -44,9 +43,10 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
         public Assets deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
                 System.out.println("Assets deserialize()");
 
-                String scenarioDataId = email + "#" + scenarioId;
+                String scenarioDataId = item.get("scenarioDataId").s();
+                String type = item.get("type").s();
 
-                String assetId = item.get("id").s();
+                String id = item.get("id").s();
                 String ticker = item.get("ticker").s();
                 Double quantity = Double.parseDouble(item.get("quantity").n());
 
@@ -63,22 +63,19 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
                                         + "ms");
                 } else {
                         System.out.println("price quantity -> " + price);
-
                         price = Double.parseDouble(item.get("quantity").n());
                 }
 
-                DataType dataType = DataType.valueOf(item.get("type").s().split("#")[0]);
-
-                return new Assets(scenarioDataId, dataType, assetId,
+                return new Assets(scenarioDataId, type, id,
                                 ticker, quantity, price, hasIndexData);
         }
 
         @Override
-        public Map<String, AttributeValue> serializable(String email, String scenario, Assets item) {
+        public Map<String, AttributeValue> serializable(String email, Assets item) {
                 Map<String, AttributeValue> serializeditem = new HashMap<>();
 
                 serializeditem.put("scenarioDataId", AttributeValue.builder().s(item.scenarioDataId).build());
-                serializeditem.put("type", AttributeValue.builder().s(item.type.toString() + "#" + item.id).build());
+                serializeditem.put("type", AttributeValue.builder().s(item.type.toString()).build());
                 serializeditem.put("id", AttributeValue.builder().s(item.id).build());
                 serializeditem.put("ticker", AttributeValue.builder().s(item.ticker).build());
                 serializeditem.put("quantity", AttributeValue.builder().n(item.quantity.toString()).build());
