@@ -1,5 +1,6 @@
 package my.service.model.Response;
 
-public record UpdateAssetResponse(boolean success) {
+public record UpdateAssetResponse(
+    boolean success) {
 
 }

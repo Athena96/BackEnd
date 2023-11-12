@@ -7,8 +7,7 @@ import my.service.model.dynamodb.Recurring;
 import my.service.model.dynamodb.Settings;
 
 public record ScenarioDataResponse(
-        Settings settings,
-        List<Assets> assets,
-        List<Recurring> recurrings
-) {
+                Settings settings,
+                List<Assets> assets,
+                List<Recurring> recurrings) {
 }

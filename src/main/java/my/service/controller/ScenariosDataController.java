@@ -99,7 +99,6 @@ public class ScenariosDataController extends BaseController {
                                                         : ChargeType.INCOME;
                                         Double amount = Double.parseDouble(item.get("amount").n());
 
-
                                         Recurring recurring = new Recurring(scenarioDataId, typeString, recurringId,
                                                         title, startAge, endAge, chargeType, amount);
                                         listOfRecurring.add(recurring);

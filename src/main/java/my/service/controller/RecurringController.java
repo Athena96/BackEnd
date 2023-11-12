@@ -101,7 +101,7 @@ public class RecurringController extends BaseController {
                 updateRecurringRequest.startAge(),
                 updateRecurringRequest.endAge(),
                 "EXPENSE".equals(updateRecurringRequest.chargeType()) ? ChargeType.EXPENSE : ChargeType.INCOME,
-                updateRecurringRequest.amount() );
+                updateRecurringRequest.amount());
 
         try {
             ddbService.putItem(Recurring.class, DDBTables.getDataTableName(), email, recurring);

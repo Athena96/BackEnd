@@ -1,8 +1,4 @@
 package my.service.utils;
 
-
- public  class Utils  {
-
-
-    
+public class Utils {
 }

@@ -1,5 +1,6 @@
 package my.service.model.Response;
 
-public record UpdateSettingsResponse(boolean success) {
+public record UpdateSettingsResponse(
+    boolean success) {
 
 }

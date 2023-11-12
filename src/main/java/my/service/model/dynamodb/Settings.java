@@ -69,7 +69,7 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
         }
 
         @Override
-        public Map<String, AttributeValue> serializable(String email, String scenario, Settings item) {
+        public Map<String, AttributeValue> serializable(String email, Settings item) {
                 Map<String, AttributeValue> serializeditem = new HashMap<>();
 
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

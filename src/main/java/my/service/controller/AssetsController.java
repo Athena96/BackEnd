@@ -88,7 +88,6 @@ public class AssetsController extends BaseController {
         System.out.println("scenarioDataId: " + updateAssetRequest.scenarioDataId());
 
         String id = updateAssetRequest.type().split("#")[1];
-        String scenarioId = updateAssetRequest.scenarioDataId().split("#")[1];
         Assets asset = new Assets(
                 updateAssetRequest.scenarioDataId(),
                 updateAssetRequest.type(),

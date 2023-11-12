@@ -60,32 +60,21 @@ public class ScenariosController extends BaseController {
             System.out.println("Setting up initial scenario");
             listOfScenarios.add(setUpInitialScenario(email));
         }
-
         return listOfScenarios;
     }
 
-
-    // @RequestMapping(path = "/addScenario", method = RequestMethod.GET)
-    // public void addScenario(@RequestHeader("Authorization") String token) throws Exception {
-
-    // }
-
     private Scenario setUpInitialScenario(String email) {
-
         String scenarioId = UUID.randomUUID().toString();
         String title = email + " Default Scenario";
         Scenario scenario = new Scenario(email, 1, scenarioId, title);
 
         try {
-            ddbService.putItem(Scenario.class, DDBTables.getScenarioTableName(), email, scenarioId, scenario);
+            ddbService.putItem(Scenario.class, DDBTables.getScenarioTableName(), email, scenario);
             return scenario;
         } catch (Exception e) {
             System.out.println("Error in DDBService.addItem");
             e.printStackTrace();
             throw e;
         }
-
     }
-
-
 }

@@ -25,17 +25,6 @@ public class Scenario implements IDeserializable<Scenario>, ISerializable<Scenar
     }
 
     @Override
-    public Map<String, AttributeValue> serializable(String email, String scenario, Scenario item) {
-        Map<String, AttributeValue> map = Map.of(
-            "email", AttributeValue.builder().s(item.email).build(),
-            "active", AttributeValue.builder().n(item.active.toString()).build(),
-            "scenarioId", AttributeValue.builder().s(item.scenarioId).build(),
-            "title", AttributeValue.builder().s(item.title).build()
-        );
-        return map;
-    }
-
-    @Override
     public Scenario deserialize(String email, String scenario, Map<String, AttributeValue> item) {
         System.out.println("Scenario deserialize()");
         String scenarioId = item.get("scenarioId").s();
@@ -45,6 +34,16 @@ public class Scenario implements IDeserializable<Scenario>, ISerializable<Scenar
                 : Integer.parseInt(item.get("active").n());
         Scenario scenarioObj = new Scenario(userEmail, active, scenarioId, title);
         return scenarioObj;
+    }
+
+    @Override
+    public Map<String, AttributeValue> serializable(String email, Scenario item) {
+        Map<String, AttributeValue> map = Map.of(
+                "email", AttributeValue.builder().s(item.email).build(),
+                "active", AttributeValue.builder().n(item.active.toString()).build(),
+                "scenarioId", AttributeValue.builder().s(item.scenarioId).build(),
+                "title", AttributeValue.builder().s(item.title).build());
+        return map;
     }
 
 }

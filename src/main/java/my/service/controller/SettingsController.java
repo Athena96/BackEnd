@@ -11,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import my.service.model.DataType;
-import my.service.model.Request.UpdateAssetRequest;
 import my.service.model.Request.UpdateSettingsRequest;
-import my.service.model.Response.UpdateAssetResponse;
 import my.service.model.Response.UpdateSettingsResponse;
-import my.service.model.dynamodb.Assets;
 import my.service.model.dynamodb.Settings;
 import my.service.services.DDBTables;
 
@@ -66,7 +63,7 @@ public class SettingsController extends BaseController {
                 updateSettingsRequest.annualInflationPercent());
 
         try {
-            ddbService.putItem(Settings.class, DDBTables.getDataTableName(), email, scenarioId, settings);
+            ddbService.putItem(Settings.class, DDBTables.getDataTableName(), email, settings);
             return new UpdateSettingsResponse(true);
         } catch (Exception e) {
             System.out.println("Error in DDBService.putItem");

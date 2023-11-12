@@ -2,6 +2,7 @@
 
 package my.service.model.Response;
 
-public record MTAPIResponse(boolean success) {
+public record MTAPIResponse(
+    boolean success) {
     
 }
