@@ -8,12 +8,11 @@ import java.util.Map;
 import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import my.service.model.DataType;
 
 public class Settings implements IDeserializable<Settings>, ISerializable<Settings> {
 
         public String scenarioDataId;
-        public DataType type;
+        public String type;
         public Date birthday;
         public Double annualAssetReturnPercent;
         public Double annualInflationPercent;
@@ -24,7 +23,7 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
 
         public Settings(
                         String scenarioDataId,
-                        DataType type,
+                        String type,
                         Date birthday,
                         Double annualAssetReturnPercent,
                         Double annualInflationPercent) {
@@ -40,7 +39,7 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
                 try {
                         System.out.println("Settings deserialize()");
 
-                        String scenarioDataId = email + "#" + scenarioId;
+                        String scenarioDataId = item.get("scenarioDataId").s();
 
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         Date birthday = formatter.parse(item.get("birthday").s());
@@ -57,9 +56,9 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
                                                         : Double.parseDouble(item
                                                                         .get("annualInflationPercent")
                                                                         .n());
-                        DataType dataType = DataType.valueOf(item.get("type").s().split("#")[0]);
+                        String type = item.get("type").s();
 
-                        return new Settings(scenarioDataId, dataType, birthday,
+                        return new Settings(scenarioDataId, type, birthday,
                                         annualAssetReturnPercent, quanannualInflationPercenttity);
                 } catch (Exception e) {
                         e.printStackTrace();

@@ -81,11 +81,6 @@ public class ScenariosDataController extends BaseController {
                 Settings settings = null;
 
                 for (Map<String, AttributeValue> item : queryResponse.items()) {
-                        System.out.println(item);
-                        System.out.println(item.get("type"));
-                        System.out.println(item.get("type").s());
-                        System.out.println(item.get("type").s().split("#")[0]);
-
                         DataType dataType = DataType.valueOf(item.get("type").s().split("#")[0]);
                         String typeString = item.get("type").s();
                         switch (dataType) {
@@ -124,9 +119,10 @@ public class ScenariosDataController extends BaseController {
 
                                                 price = Double.parseDouble(item.get("quantity").n());
                                         }
-                                        String type = "Assets" + "#" + assetId;
+                                        // String type = "Assets" + "#" + assetId;
 
-                                        listOfAssets.add(new Assets(scenarioDataId, type, assetId, ticker, quantity,
+                                        listOfAssets.add(new Assets(scenarioDataId, typeString, assetId, ticker,
+                                                        quantity,
                                                         price, hasIndexData));
                                         break;
                                 case Settings:
@@ -147,7 +143,7 @@ public class ScenariosDataController extends BaseController {
                                                                         : Double.parseDouble(item
                                                                                         .get("annualInflationPercent")
                                                                                         .n());
-                                        settings = new Settings(scenarioDataId, dataType, birthday,
+                                        settings = new Settings(scenarioDataId, typeString, birthday,
                                                         annualAssetReturnPercent, quanannualInflationPercenttity);
                                         break;
 

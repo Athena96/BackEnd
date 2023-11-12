@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import my.service.model.DataType;
 import my.service.model.Request.UpdateSettingsRequest;
 import my.service.model.Response.UpdateSettingsResponse;
 import my.service.model.dynamodb.Settings;
@@ -47,17 +46,16 @@ public class SettingsController extends BaseController {
 
     @RequestMapping(path = "/updateSettings", method = RequestMethod.PUT)
     public UpdateSettingsResponse updateSettings(@RequestHeader("Authorization") String token,
-            @RequestParam(name = "scenarioId", required = true) String scenarioId,
             @RequestBody UpdateSettingsRequest updateSettingsRequest) throws Exception {
         System.out.println("SettingsController.updateSettings()");
 
         String email = getUserEmail(token);
         System.out.println("email: " + email);
-        System.out.println("scenarioId: " + scenarioId);
+        System.out.println("scenarioDataId: " + updateSettingsRequest.scenarioDataId());
 
         Settings settings = new Settings(
-                email + "#" + scenarioId,
-                DataType.Settings,
+                updateSettingsRequest.scenarioDataId(),
+                updateSettingsRequest.type(),
                 updateSettingsRequest.birthday(),
                 updateSettingsRequest.annualAssetReturnPercent(),
                 updateSettingsRequest.annualInflationPercent());
