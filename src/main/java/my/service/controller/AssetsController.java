@@ -21,27 +21,31 @@ import my.service.services.DDBTables;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @RestController
 @EnableWebMvc
 public class AssetsController extends BaseController {
+    private static final Logger log = LogManager.getLogger(AssetsController.class);
 
     @RequestMapping(path = "/listAssets", method = RequestMethod.GET)
     public List<Assets> listAssets(@RequestHeader("Authorization") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
-        System.out.println("AssetsController.listAssets()");
+
+        log.info("AssetsController.listAssets()");
 
         Date startTime = new Date();
 
         String email = getUserEmail(token);
-        System.out.println("email: " + email);
-        System.out.println("scenarioId: " + scenarioId);
+        log.info("email: " + email);
+        log.info("scenarioId: " + scenarioId);
 
         List<Assets> listOfAssets = ddbService.queryTypesForUser(Assets.class, email, scenarioId);
-        System.out.println(listOfAssets);
+        log.info(listOfAssets);
 
         Date endTime = new Date();
-        System.out.println(
+        log.info(
                 "AssetsController.listAssets() Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
 
         return listOfAssets;
@@ -50,11 +54,11 @@ public class AssetsController extends BaseController {
     @RequestMapping(path = "/addAsset", method = RequestMethod.POST)
     public AddAssetResponse addAsset(@RequestHeader("Authorization") String token,
             @RequestBody AddAssetRequest addAssetRequest) throws Exception {
-        System.out.println("AssetsController.addAsset()");
+        log.info("AssetsController.addAsset()");
 
         String email = getUserEmail(token);
-        System.out.println("email: " + email);
-        System.out.println("scenarioId: " + addAssetRequest.scenarioId());
+        log.info("email: " + email);
+        log.info("scenarioId: " + addAssetRequest.scenarioId());
 
         String id = UUID.randomUUID().toString();
         String scenarioDataId = email + "#" + addAssetRequest.scenarioId();
@@ -72,7 +76,7 @@ public class AssetsController extends BaseController {
             ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, asset);
             return new AddAssetResponse(true);
         } catch (Exception e) {
-            System.out.println("Error in DDBService.addItem");
+            log.info("Error in DDBService.addItem");
             e.printStackTrace();
             return new AddAssetResponse(false);
         }
@@ -81,11 +85,11 @@ public class AssetsController extends BaseController {
     @RequestMapping(path = "/updateAsset", method = RequestMethod.PUT)
     public UpdateAssetResponse updateAsset(@RequestHeader("Authorization") String token,
             @RequestBody UpdateAssetRequest updateAssetRequest) throws Exception {
-        System.out.println("AssetsController.updateAsset()");
+        log.info("AssetsController.updateAsset()");
 
         String email = getUserEmail(token); // updateAssetRequest.scenarioDataId().split("#")[0];
-        System.out.println("email: " + email);
-        System.out.println("scenarioDataId: " + updateAssetRequest.scenarioDataId());
+        log.info("email: " + email);
+        log.info("scenarioDataId: " + updateAssetRequest.scenarioDataId());
 
         String id = updateAssetRequest.type().split("#")[1];
         Assets asset = new Assets(
@@ -100,7 +104,7 @@ public class AssetsController extends BaseController {
             ddbService.putItem(Assets.class, DDBTables.getDataTableName(), email, asset);
             return new UpdateAssetResponse(true);
         } catch (Exception e) {
-            System.out.println("Error in DDBService.putItem");
+            log.info("Error in DDBService.putItem");
             e.printStackTrace();
             return new UpdateAssetResponse(false);
         }
@@ -109,17 +113,17 @@ public class AssetsController extends BaseController {
     @RequestMapping(path = "/deleteAsset", method = RequestMethod.DELETE)
     public DeleteAssetResponse deleteAsset(@RequestHeader("Authorization") String token,
             @RequestBody DeleteAssetRequest deleteAssetRequest) throws Exception {
-        System.out.println("AssetsController.deleteAsset()");
+        log.info("AssetsController.deleteAsset()");
 
         String email = getUserEmail(token);
-        System.out.println("deleteAssetRequest.scenarioDataId(): " + deleteAssetRequest.scenarioDataId());
-        System.out.println("deleteAssetRequest.type(): " + deleteAssetRequest.type());
+        log.info("deleteAssetRequest.scenarioDataId(): " + deleteAssetRequest.scenarioDataId());
+        log.info("deleteAssetRequest.type(): " + deleteAssetRequest.type());
 
         try {
             ddbService.deleteItem(Assets.class, email, deleteAssetRequest.scenarioDataId(), deleteAssetRequest.type());
             return new DeleteAssetResponse(true);
         } catch (Exception e) {
-            System.out.println("Error in DDBService.addItem");
+            log.info("Error in DDBService.addItem");
             e.printStackTrace();
             return new DeleteAssetResponse(false);
         }

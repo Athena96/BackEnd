@@ -11,15 +11,19 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeTy
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @CrossOrigin(origins = "*")
 public class BaseController {
+    private static final Logger log = LogManager.getLogger(BaseController.class);
+
     protected final DynamoDbClient dynamoDbClient;
     protected final CognitoIdentityProviderClient cognitoClient;
     protected final DDBService ddbService;
 
     public BaseController() {
-        System.out.println("BaseController");
+        log.info("BaseController");
         Date startTime = new Date();
 
         dynamoDbClient = DynamoDbClient.builder()
@@ -30,7 +34,7 @@ public class BaseController {
                 .build();
         ddbService = new DDBService(dynamoDbClient);
         Date endTime = new Date();
-        System.out.println("BaseController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+        log.info("BaseController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
     }
 
     protected String getUserEmail(String token) {
@@ -47,11 +51,11 @@ public class BaseController {
                     .findFirst()
                     .orElse("Email not found");
 
-            System.out.println("User email: " + email);
+            log.info("User email: " + email);
             return email;
 
         } catch (Error e) {
-            System.out.println("getUserEmail Error");
+            log.info("getUserEmail Error");
 
             e.printStackTrace();
             throw e;

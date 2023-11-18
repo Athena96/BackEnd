@@ -23,15 +23,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @EnableWebMvc
 public class ScenariosDataController extends BaseController {
+
+        private static final Logger log = LogManager.getLogger(ScenariosDataController.class);
 
         @RequestMapping(path = "/getScenarioData", method = RequestMethod.GET)
         public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String token) throws Exception {
 
                 Date startTime = new Date();
-                System.out.println("DataController");
+                log.info("DataController");
 
                 String email = getUserEmail(token);
 
@@ -48,7 +53,7 @@ public class ScenariosDataController extends BaseController {
 
                 Scenario activeScenario = null;
                 for (Map<String, AttributeValue> item : scenarioqueryResponse.items()) {
-                        System.out.println(item.get("active"));
+                        log.info(item.get("active"));
                         if (item.get("active").n() != null && Integer.parseInt(item.get("active").n()) == 1) {
                                 String sid = item.get("scenarioId").s();
                                 String title = item.get("title").s();
@@ -60,9 +65,9 @@ public class ScenariosDataController extends BaseController {
                 }
 
                 String activeScenarioID = activeScenario.scenarioId;
-                System.out.println("Active Scenario: " + activeScenarioID);
+                log.info("Active Scenario: " + activeScenarioID);
                 String scenarioDataId = email + "#" + activeScenarioID;
-                System.out.println("PK: " + scenarioDataId);
+                log.info("PK: " + scenarioDataId);
                 QueryRequest queryRequest = QueryRequest.builder()
                                 .tableName(System.getenv("DATA_TABLE"))
                                 .keyConditionExpression(
@@ -73,8 +78,8 @@ public class ScenariosDataController extends BaseController {
                                 .build();
 
                 QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
-                System.out.println("queryResponse");
-                System.out.println(queryResponse);
+                log.info("queryResponse");
+                log.info(queryResponse);
 
                 List<Recurring> listOfRecurring = new ArrayList<>();
                 List<Assets> listOfAssets = new ArrayList<>();
@@ -111,11 +116,11 @@ public class ScenariosDataController extends BaseController {
                                                 Date startTime_stock = new Date();
                                                 price = StockService.getPriceForStock(ticker);
                                                 Date endTime_stock = new Date();
-                                                System.out.println("StockService Load Time: "
+                                                log.info("StockService Load Time: "
                                                                 + (endTime_stock.getTime() - startTime_stock.getTime())
                                                                 + "ms");
                                         } else {
-                                                System.out.println("price quantity -> " + price);
+                                                log.info("price quantity -> " + price);
 
                                                 price = Double.parseDouble(item.get("quantity").n());
                                         }
@@ -148,7 +153,7 @@ public class ScenariosDataController extends BaseController {
                                         break;
 
                                 default:
-                                        System.out.println("Invalid dataType -> " + dataType);
+                                        log.info("Invalid dataType -> " + dataType);
                                         break;
                         }
 
@@ -157,10 +162,10 @@ public class ScenariosDataController extends BaseController {
                 ScenarioDataResponse scenarioDataResponse = new ScenarioDataResponse(settings, listOfAssets,
                                 listOfRecurring);
 
-                System.out.println(scenarioDataResponse);
+                log.info(scenarioDataResponse);
 
                 Date endTime = new Date();
-                System.out.println("ScenariosDataController Load Time: " + (endTime.getTime() - startTime.getTime())
+                log.info("ScenariosDataController Load Time: " + (endTime.getTime() - startTime.getTime())
                                 + "ms");
 
                 return scenarioDataResponse;

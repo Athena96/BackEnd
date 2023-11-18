@@ -10,12 +10,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class StockService {
 
+    private static final Logger log = LogManager.getLogger(StockService.class);
+
     public static Double getPriceForStock(String ticker) {
-        System.out.println("getPriceForStock");
+        log.info("getPriceForStock");
         String url = "https://query2.finance.yahoo.com/v8/finance/chart/" + ticker + "?interval=1d&range=1d";
-        System.out.println("url " + url);
+        log.info("url " + url);
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
@@ -25,7 +30,7 @@ public class StockService {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 String result = EntityUtils.toString(entity);
-                System.out.println(result);
+                log.info(result);
                 JSONObject jsonObject = new JSONObject(result);
                 Double price = jsonObject.getJSONObject("chart")
                         .getJSONArray("result")

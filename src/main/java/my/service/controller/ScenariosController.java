@@ -15,14 +15,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @EnableWebMvc
 public class ScenariosController extends BaseController {
 
+    private static final Logger log = LogManager.getLogger(ScenariosController.class);
+
     @RequestMapping(path = "/listScenarios", method = RequestMethod.GET)
     public List<Scenario> listScenarios(@RequestHeader("Authorization") String token) throws Exception {
         Date startTime = new Date();
-        System.out.println("ScenariosController");
+        log.info("ScenariosController");
 
         String email = getUserEmail(token);
 
@@ -34,12 +39,12 @@ public class ScenariosController extends BaseController {
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        System.out.println("queryResponse");
-        System.out.println(queryResponse);
+        log.info("queryResponse");
+        log.info(queryResponse);
 
         List<Scenario> listOfScenarios = new ArrayList<>();
         for (Map<String, AttributeValue> item : queryResponse.items()) {
-            System.out.println(item);
+            log.info(item);
 
             String scenarioId = item.get("scenarioId").s();
             String title = item.get("title").s();
@@ -50,14 +55,14 @@ public class ScenariosController extends BaseController {
             listOfScenarios.add(scenario);
         }
 
-        System.out.println(listOfScenarios);
+        log.info(listOfScenarios);
 
         Date endTime = new Date();
-        System.out.println("ScenariosController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+        log.info("ScenariosController Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
 
         if (listOfScenarios.size() == 0) {
-            System.out.println("No scenarios found for user: " + email);
-            System.out.println("Setting up initial scenario");
+            log.info("No scenarios found for user: " + email);
+            log.info("Setting up initial scenario");
             listOfScenarios.add(setUpInitialScenario(email));
         }
         return listOfScenarios;
@@ -72,7 +77,7 @@ public class ScenariosController extends BaseController {
             ddbService.putItem(Scenario.class, DDBTables.getScenarioTableName(), email, scenario);
             return scenario;
         } catch (Exception e) {
-            System.out.println("Error in DDBService.addItem");
+            log.info("Error in DDBService.addItem");
             e.printStackTrace();
             throw e;
         }

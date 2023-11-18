@@ -2,12 +2,17 @@ package my.service.model.dynamodb;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import my.service.model.ChargeType;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Recurring implements IDeserializable<Recurring>, ISerializable<Recurring> {
+
+        private static final Logger log = LogManager.getLogger(Recurring.class);
 
         public String scenarioDataId;
         public String type;
@@ -19,7 +24,7 @@ public class Recurring implements IDeserializable<Recurring>, ISerializable<Recu
         public Double amount;
 
         public Recurring() {
-                System.out.println("Recurring no args constructor");
+                log.info("Recurring no args constructor");
         }
 
         public Recurring(String scenarioDataId,
@@ -42,7 +47,7 @@ public class Recurring implements IDeserializable<Recurring>, ISerializable<Recu
 
         @Override
         public Recurring deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
-                System.out.println("Recurring deserialize()");
+                log.info("Recurring deserialize()");
                 String scenarioDataId = item.get("scenarioDataId").s();
                 String type = item.get("type").s();
                 String recurringId = item.get("id").s();

@@ -9,7 +9,12 @@ import my.service.model.ISerializable;
 import my.service.services.StockService;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
+
+        private static final Logger log = LogManager.getLogger(Assets.class);
 
         public String scenarioDataId;
         public String type;
@@ -20,7 +25,7 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
         public Integer hasIndexData;
 
         public Assets() {
-                System.out.println("Assets no args constructor");
+                log.info("Assets no args constructor");
         }
 
         public Assets(String scenarioDataId,
@@ -41,7 +46,7 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
 
         @Override
         public Assets deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
-                System.out.println("Assets deserialize()");
+                log.info("Assets deserialize()");
 
                 String scenarioDataId = item.get("scenarioDataId").s();
                 String type = item.get("type").s();
@@ -58,11 +63,11 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
                         Date startTime_stock = new Date();
                         price = StockService.getPriceForStock(ticker);
                         Date endTime_stock = new Date();
-                        System.out.println("StockService Load Time: "
+                        log.info("StockService Load Time: "
                                         + (endTime_stock.getTime() - startTime_stock.getTime())
                                         + "ms");
                 } else {
-                        System.out.println("price quantity -> " + price);
+                        log.info("price quantity -> " + price);
                         price = Double.parseDouble(item.get("quantity").n());
                 }
 

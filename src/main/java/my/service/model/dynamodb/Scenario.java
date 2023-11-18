@@ -6,7 +6,12 @@ import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Scenario implements IDeserializable<Scenario>, ISerializable<Scenario> {
+
+    private static final Logger log = LogManager.getLogger(Scenario.class);
 
     public String email;
     public Integer active;
@@ -14,7 +19,7 @@ public class Scenario implements IDeserializable<Scenario>, ISerializable<Scenar
     public String title;
 
     public Scenario() {
-        System.out.println("Scenario no args constructor");
+        log.info("Scenario no args constructor");
     }
 
     public Scenario(String email, Integer active, String scenarioId, String title) {
@@ -26,7 +31,7 @@ public class Scenario implements IDeserializable<Scenario>, ISerializable<Scenar
 
     @Override
     public Scenario deserialize(String email, String scenario, Map<String, AttributeValue> item) {
-        System.out.println("Scenario deserialize()");
+        log.info("Scenario deserialize()");
         String scenarioId = item.get("scenarioId").s();
         String title = item.get("title").s();
         String userEmail = item.get("email").s();

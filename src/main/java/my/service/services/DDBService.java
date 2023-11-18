@@ -14,7 +14,12 @@ import java.util.Map;
 import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DDBService {
+
+    private static final Logger log = LogManager.getLogger(DDBService.class);
 
     private final DynamoDbClient dynamoDbClient;
 
@@ -24,14 +29,14 @@ public class DDBService {
 
     public <T extends ISerializable<T>> void deleteItem(Class<T> clazz, String email, String scenarioDataId,
             String type) {
-        System.out.println("DDBService.deleteItem()");
+        log.info("DDBService.deleteItem()");
         dynamoDbClient.deleteItem(builder -> builder.tableName(DDBTables.getDataTableName())
                 .key(Map.of("scenarioDataId", AttributeValue.builder().s(scenarioDataId).build(),
                         "type", AttributeValue.builder().s(type).build())));
     }
 
     public <T extends ISerializable<T>> void putItem(Class<T> clazz, String table, String email, T item) {
-        System.out.println("DDBService.putItem() in table: " + table + " for user: " + email);
+        log.info("DDBService.putItem() in table: " + table + " for user: " + email);
         Map<String, AttributeValue> serializedItem = item.serializable(email, item);
         dynamoDbClient.putItem(builder -> builder.tableName(table)
                 .item(serializedItem));
@@ -41,7 +46,7 @@ public class DDBService {
             throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
         String type = clazz.getSimpleName();
-        System.out.println("Query for type: " + type);
+        log.info("Query for type: " + type);
         String scenarioDataId = email + "#" + scenarioId;
 
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();

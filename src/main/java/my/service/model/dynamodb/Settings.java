@@ -9,7 +9,12 @@ import my.service.model.IDeserializable;
 import my.service.model.ISerializable;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Settings implements IDeserializable<Settings>, ISerializable<Settings> {
+
+        private static final Logger log = LogManager.getLogger(Settings.class);
 
         public String scenarioDataId;
         public String type;
@@ -18,7 +23,7 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
         public Double annualInflationPercent;
 
         public Settings() {
-                System.out.println("Settings no args constructor");
+                log.info("Settings no args constructor");
         }
 
         public Settings(
@@ -37,7 +42,7 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
         @Override
         public Settings deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
                 try {
-                        System.out.println("Settings deserialize()");
+                        log.info("Settings deserialize()");
 
                         String scenarioDataId = item.get("scenarioDataId").s();
 
