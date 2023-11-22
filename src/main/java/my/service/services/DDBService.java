@@ -42,16 +42,24 @@ public class DDBService {
                 .item(serializedItem));
     }
 
-    public <T extends IDeserializable<T>> List<T> queryTypesForUser(Class<T> clazz, String email, String scenarioId)
-            throws IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public <T extends IDeserializable<T>> List<T> queryTypesForUser(
+        Class<T> clazz, 
+        String email, 
+        String scenarioId)
+            throws IllegalArgumentException, 
+            InvocationTargetException, 
+            NoSuchMethodException, 
+            SecurityException {
 
         String type = clazz.getSimpleName();
         log.info("Query for type: " + type);
         String scenarioDataId = email + "#" + scenarioId;
 
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":emailScenarioIdValue", AttributeValue.builder().s(scenarioDataId).build());
-        expressionAttributeValues.put(":typeValue", AttributeValue.builder().s(type).build());
+        expressionAttributeValues.put(":emailScenarioIdValue", 
+        AttributeValue.builder().s(scenarioDataId).build());
+        expressionAttributeValues.put(":typeValue", 
+        AttributeValue.builder().s(type).build());
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(DDBTables.getDataTableName())
@@ -68,9 +76,8 @@ public class DDBService {
 
         try {
             for (Map<String, AttributeValue> item : scenarioqueryResponse.items()) {
-                T instance = clazz.getDeclaredConstructor().newInstance(); // Create an instance of type T
-                T obj = instance.deserialize(email, scenarioId, item); // Deserialize the item map into an object of
-                                                                       // type T
+                T instance = clazz.getDeclaredConstructor().newInstance();
+                T obj = instance.deserialize(email, scenarioId, item); 
                 results.add(obj); // Add the object to the results
             }
         } catch (InstantiationException | IllegalAccessException e) {

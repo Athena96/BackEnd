@@ -40,7 +40,10 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
         }
 
         @Override
-        public Settings deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
+        public Settings deserialize(
+                final String email, 
+                final String scenarioId, 
+                Map<String, AttributeValue> item) {
                 try {
                         log.info("Settings deserialize()");
 

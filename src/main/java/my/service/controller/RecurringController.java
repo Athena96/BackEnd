@@ -50,7 +50,8 @@ public class RecurringController extends BaseController {
 
         Date endTime = new Date();
         log.info(
-                "RecurringController.listRecurring() Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+                "RecurringController.listRecurring() Load Time: " +
+                 (endTime.getTime() - startTime.getTime()) + "ms");
 
         return listOfRecurrings;
     }
@@ -106,7 +107,8 @@ public class RecurringController extends BaseController {
                 updateRecurringRequest.title(),
                 updateRecurringRequest.startAge(),
                 updateRecurringRequest.endAge(),
-                "EXPENSE".equals(updateRecurringRequest.chargeType()) ? ChargeType.EXPENSE : ChargeType.INCOME,
+                "EXPENSE".equals(updateRecurringRequest.chargeType()) ? 
+                ChargeType.EXPENSE : ChargeType.INCOME,
                 updateRecurringRequest.amount());
 
         try {

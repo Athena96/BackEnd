@@ -1,6 +1,11 @@
 package my.service.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import my.service.model.ChargeType;
@@ -113,11 +118,11 @@ public class ScenariosDataController extends BaseController {
 
                                         Double price = 0.0;
                                         if (hasIndexData == 1) {
-                                                Date startTime_stock = new Date();
+                                                Date startTimeStock = new Date();
                                                 price = StockService.getPriceForStock(ticker);
-                                                Date endTime_stock = new Date();
+                                                Date endTimeStock = new Date();
                                                 log.info("StockService Load Time: "
-                                                                + (endTime_stock.getTime() - startTime_stock.getTime())
+                                                                + (endTimeStock.getTime() - startTimeStock.getTime())
                                                                 + "ms");
                                         } else {
                                                 log.info("price quantity -> " + price);
@@ -143,13 +148,16 @@ public class ScenariosDataController extends BaseController {
                                                                                         .get("annualAssetReturnPercent")
                                                                                         .n());
                                         Double quanannualInflationPercenttity = item.get("annualInflationPercent")
-                                                        .n() == null
-                                                                        ? null
-                                                                        : Double.parseDouble(item
-                                                                                        .get("annualInflationPercent")
-                                                                                        .n());
-                                        settings = new Settings(scenarioDataId, typeString, birthday,
-                                                        annualAssetReturnPercent, quanannualInflationPercenttity);
+                                                        .n() == null ? 
+                                                        null : 
+                                                        Double.parseDouble(
+                                                                item.get("annualInflationPercent").n());
+                                        settings = new Settings(
+                                                scenarioDataId, 
+                                                typeString, 
+                                                birthday,
+                                                annualAssetReturnPercent, 
+                                                quanannualInflationPercenttity);
                                         break;
 
                                 default:

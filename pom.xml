@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>my.service</groupId>
@@ -139,6 +139,36 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError> <!-- Fail the build on a violation -->
+                            <violationSeverity>warning</violationSeverity> <!-- Fail on warnings and
+                            above -->
+
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.puppycrawl.tools</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>8.41</version> <!-- or a later version -->
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!-- don't build a jar, we'll use the classes dir -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -192,7 +222,8 @@
                                 <configuration>
                                     <finalName>${project.artifactId}-${project.version}</finalName>
                                     <descriptors>
-                                        <descriptor>src${file.separator}assembly${file.separator}bin.xml</descriptor>
+                                        <descriptor>
+                                            src${file.separator}assembly${file.separator}bin.xml</descriptor>
                                     </descriptors>
                                     <attach>false</attach>
                                 </configuration>

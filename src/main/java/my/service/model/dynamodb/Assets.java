@@ -45,7 +45,10 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
         }
 
         @Override
-        public Assets deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
+        public Assets deserialize(
+                        final String email,
+                        final String scenarioId,
+                        Map<String, AttributeValue> item) {
                 log.info("Assets deserialize()");
 
                 String scenarioDataId = item.get("scenarioDataId").s();
@@ -60,11 +63,11 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
 
                 Double price = 0.0;
                 if (hasIndexData == 1) {
-                        Date startTime_stock = new Date();
+                        Date startTimeStock = new Date();
                         price = StockService.getPriceForStock(ticker);
-                        Date endTime_stock = new Date();
+                        Date endTimeStock = new Date();
                         log.info("StockService Load Time: "
-                                        + (endTime_stock.getTime() - startTime_stock.getTime())
+                                        + (endTimeStock.getTime() - startTimeStock.getTime())
                                         + "ms");
                 } else {
                         log.info("price quantity -> " + price);
@@ -85,7 +88,8 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
                 serializeditem.put("ticker", AttributeValue.builder().s(item.ticker).build());
                 serializeditem.put("quantity", AttributeValue.builder().n(item.quantity.toString()).build());
                 serializeditem.put("price", AttributeValue.builder().n(item.price.toString()).build());
-                serializeditem.put("hasIndexData", AttributeValue.builder().n(item.hasIndexData.toString()).build());
+                serializeditem.put("hasIndexData",
+                                AttributeValue.builder().n(item.hasIndexData.toString()).build());
 
                 return serializeditem;
 

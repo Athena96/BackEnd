@@ -46,7 +46,8 @@ public class AssetsController extends BaseController {
 
         Date endTime = new Date();
         log.info(
-                "AssetsController.listAssets() Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+                "AssetsController.listAssets() Load Time: " +
+                 (endTime.getTime() - startTime.getTime()) + "ms");
 
         return listOfAssets;
     }
@@ -120,7 +121,10 @@ public class AssetsController extends BaseController {
         log.info("deleteAssetRequest.type(): " + deleteAssetRequest.type());
 
         try {
-            ddbService.deleteItem(Assets.class, email, deleteAssetRequest.scenarioDataId(), deleteAssetRequest.type());
+            ddbService.deleteItem(Assets.class, 
+            email, 
+            deleteAssetRequest.scenarioDataId(),
+             deleteAssetRequest.type());
             return new DeleteAssetResponse(true);
         } catch (Exception e) {
             log.info("Error in DDBService.addItem");

@@ -46,7 +46,10 @@ public class Recurring implements IDeserializable<Recurring>, ISerializable<Recu
         }
 
         @Override
-        public Recurring deserialize(final String email, final String scenarioId, Map<String, AttributeValue> item) {
+        public Recurring deserialize(
+                final String email, 
+                final String scenarioId, 
+                Map<String, AttributeValue> item) {
                 log.info("Recurring deserialize()");
                 String scenarioDataId = item.get("scenarioDataId").s();
                 String type = item.get("type").s();
@@ -71,7 +74,8 @@ public class Recurring implements IDeserializable<Recurring>, ISerializable<Recu
                 serializeditem.put("title", AttributeValue.builder().s(item.title).build());
                 serializeditem.put("startAge", AttributeValue.builder().n(item.startAge.toString()).build());
                 serializeditem.put("endAge", AttributeValue.builder().n(item.endAge.toString()).build());
-                serializeditem.put("chargeType", AttributeValue.builder().s(item.chargeType.toString()).build());
+                serializeditem.put("chargeType", 
+                        AttributeValue.builder().s(item.chargeType.toString()).build());
                 serializeditem.put("amount", AttributeValue.builder().n(item.amount.toString()).build());
                 return serializeditem;
         }

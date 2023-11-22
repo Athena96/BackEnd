@@ -43,7 +43,8 @@ public class SettingsController extends BaseController {
 
         Date endTime = new Date();
         log.info(
-                "SettingsController.listSettings() Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
+                "SettingsController.listSettings() Load Time: " + 
+                (endTime.getTime() - startTime.getTime()) + "ms");
 
         return listOfSettings.get(0);
     }
