@@ -16,6 +16,7 @@ import my.service.model.dynamodb.Assets;
 import my.service.model.dynamodb.Recurring;
 import my.service.model.dynamodb.Scenario;
 import my.service.model.dynamodb.Settings;
+import my.service.processors.ScenarioProcessor;
 import my.service.services.StockService;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
@@ -24,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,40 +38,23 @@ public class ScenariosDataController extends BaseController {
 
         private static final Logger log = LogManager.getLogger(ScenariosDataController.class);
 
+        ScenarioProcessor scenarioProcessor = new ScenarioProcessor();
+
         @RequestMapping(path = "/getScenarioData", method = RequestMethod.GET)
         public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String token) throws Exception {
 
                 Date startTime = new Date();
-                log.info("DataController");
+                log.info("DataControllerdd");
 
                 String email = getUserEmail(token);
+                log.info("email " + email);
 
-                Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-                expressionAttributeValues.put(":emailValue", AttributeValue.builder().s(email).build());
-                expressionAttributeValues.put(":activeValue", AttributeValue.builder().n("1").build());
-                QueryRequest scenarioqueryRequest = QueryRequest.builder()
-                                .tableName(System.getenv("SCENARIO_TABLE"))
-                                .keyConditionExpression("email = :emailValue and active = :activeValue")
-                                .expressionAttributeValues(expressionAttributeValues)
-                                .build();
-
-                QueryResponse scenarioqueryResponse = dynamoDbClient.query(scenarioqueryRequest);
-
-                Scenario activeScenario = null;
-                for (Map<String, AttributeValue> item : scenarioqueryResponse.items()) {
-                        log.info(item.get("active"));
-                        if (item.get("active").n() != null && Integer.parseInt(item.get("active").n()) == 1) {
-                                String sid = item.get("scenarioId").s();
-                                String title = item.get("title").s();
-                                String userEmail = item.get("email").s();
-                                Integer active = item.get("active").n() == null ? 0
-                                                : Integer.parseInt(item.get("active").n());
-                                activeScenario = new Scenario(userEmail, active, sid, title);
-                        }
-                }
+                Scenario activeScenario = scenarioProcessor.getActiveScenario(email);
+                log.info("activeScenario " + activeScenario);
 
                 String activeScenarioID = activeScenario.scenarioId;
                 log.info("Active Scenario: " + activeScenarioID);
+
                 String scenarioDataId = email + "#" + activeScenarioID;
                 log.info("PK: " + scenarioDataId);
                 QueryRequest queryRequest = QueryRequest.builder()
@@ -167,8 +151,10 @@ public class ScenariosDataController extends BaseController {
 
                 }
 
-                ScenarioDataResponse scenarioDataResponse = new ScenarioDataResponse(settings, listOfAssets,
-                                listOfRecurring);
+                ScenarioDataResponse scenarioDataResponse = new ScenarioDataResponse(
+                        settings, 
+                        listOfAssets,
+                        listOfRecurring);
 
                 log.info(scenarioDataResponse);
 

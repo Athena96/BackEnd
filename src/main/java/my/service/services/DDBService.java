@@ -27,12 +27,25 @@ public class DDBService {
         this.dynamoDbClient = dynamoDbClient;
     }
 
-    public <T extends ISerializable<T>> void deleteItem(Class<T> clazz, String email, String scenarioDataId,
-            String type) {
+    public <T extends ISerializable<T>> void deleteItem(
+        Class<T> clazz, 
+        String email, 
+        String scenarioDataId,
+        String type) {
         log.info("DDBService.deleteItem()");
         dynamoDbClient.deleteItem(builder -> builder.tableName(DDBTables.getDataTableName())
                 .key(Map.of("scenarioDataId", AttributeValue.builder().s(scenarioDataId).build(),
                         "type", AttributeValue.builder().s(type).build())));
+    }
+
+     public <T extends ISerializable<T>> void deleteItemScenario(
+        Class<T> clazz, 
+        String email, 
+        String scenarioId) {
+        log.info("DDBService.deleteItemScenario()");
+        dynamoDbClient.deleteItem(builder -> builder.tableName(DDBTables.getScenarioTableName())
+                .key(Map.of("email", AttributeValue.builder().s(email).build(),
+                        "scenarioId", AttributeValue.builder().s(scenarioId).build())));
     }
 
     public <T extends ISerializable<T>> void putItem(Class<T> clazz, String table, String email, T item) {
@@ -61,10 +74,10 @@ public class DDBService {
         expressionAttributeValues.put(":typeValue", 
         AttributeValue.builder().s(type).build());
 
+        String keycondexp = "scenarioDataId = :emailScenarioIdValue and begins_with(#type, :typeValue)";
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(DDBTables.getDataTableName())
-                .keyConditionExpression(
-                        "scenarioDataId = :emailScenarioIdValue and begins_with(#type, :typeValue)")
+                .keyConditionExpression(keycondexp)
                 .expressionAttributeNames(Map.of("#type", "type"))
                 .expressionAttributeValues(
                         expressionAttributeValues)

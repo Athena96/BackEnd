@@ -68,12 +68,18 @@ public class Recurring implements IDeserializable<Recurring>, ISerializable<Recu
         @Override
         public Map<String, AttributeValue> serializable(String email, Recurring item) {
                 Map<String, AttributeValue> serializeditem = new HashMap<>();
-                serializeditem.put("scenarioDataId", AttributeValue.builder().s(item.scenarioDataId).build());
-                serializeditem.put("type", AttributeValue.builder().s(item.type).build());
-                serializeditem.put("id", AttributeValue.builder().s(item.id).build());
-                serializeditem.put("title", AttributeValue.builder().s(item.title).build());
-                serializeditem.put("startAge", AttributeValue.builder().n(item.startAge.toString()).build());
-                serializeditem.put("endAge", AttributeValue.builder().n(item.endAge.toString()).build());
+                serializeditem.put("scenarioDataId", 
+                AttributeValue.builder().s(item.scenarioDataId).build());
+                serializeditem.put("type", 
+                AttributeValue.builder().s(item.type).build());
+                serializeditem.put("id", 
+                AttributeValue.builder().s(item.id).build());
+                serializeditem.put("title", 
+                AttributeValue.builder().s(item.title).build());
+                serializeditem.put("startAge", 
+                AttributeValue.builder().n(item.startAge.toString()).build());
+                serializeditem.put("endAge", 
+                AttributeValue.builder().n(item.endAge.toString()).build());
                 serializeditem.put("chargeType", 
                         AttributeValue.builder().s(item.chargeType.toString()).build());
                 serializeditem.put("amount", AttributeValue.builder().n(item.amount.toString()).build());

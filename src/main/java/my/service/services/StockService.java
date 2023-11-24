@@ -19,7 +19,9 @@ public class StockService {
 
     public static Double getPriceForStock(String ticker) {
         log.info("getPriceForStock");
-        String url = "https://query2.finance.yahoo.com/v8/finance/chart/" + ticker + "?interval=1d&range=1d";
+        String url = "https://query2.finance.yahoo.com/v8/finance/chart/" + 
+        ticker + 
+        "?interval=1d&range=1d";
         log.info("url " + url);
 
         CloseableHttpClient httpClient = HttpClients.createDefault();

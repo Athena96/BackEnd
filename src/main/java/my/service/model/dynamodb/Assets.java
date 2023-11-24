@@ -82,12 +82,18 @@ public class Assets implements IDeserializable<Assets>, ISerializable<Assets> {
         public Map<String, AttributeValue> serializable(String email, Assets item) {
                 Map<String, AttributeValue> serializeditem = new HashMap<>();
 
-                serializeditem.put("scenarioDataId", AttributeValue.builder().s(item.scenarioDataId).build());
-                serializeditem.put("type", AttributeValue.builder().s(item.type.toString()).build());
-                serializeditem.put("id", AttributeValue.builder().s(item.id).build());
-                serializeditem.put("ticker", AttributeValue.builder().s(item.ticker).build());
-                serializeditem.put("quantity", AttributeValue.builder().n(item.quantity.toString()).build());
-                serializeditem.put("price", AttributeValue.builder().n(item.price.toString()).build());
+                serializeditem.put("scenarioDataId",
+                                AttributeValue.builder().s(item.scenarioDataId).build());
+                serializeditem.put("type",
+                                AttributeValue.builder().s(item.type.toString()).build());
+                serializeditem.put("id",
+                                AttributeValue.builder().s(item.id).build());
+                serializeditem.put("ticker",
+                                AttributeValue.builder().s(item.ticker).build());
+                serializeditem.put("quantity",
+                                AttributeValue.builder().n(item.quantity.toString()).build());
+                serializeditem.put("price",
+                                AttributeValue.builder().n(item.price.toString()).build());
                 serializeditem.put("hasIndexData",
                                 AttributeValue.builder().n(item.hasIndexData.toString()).build());
 

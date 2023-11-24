@@ -18,11 +18,10 @@ import my.service.model.Request.UpdateRecurringRequest;
 import my.service.model.Response.MTAPIResponse;
 
 import my.service.model.dynamodb.Recurring;
+import my.service.processors.RecurringProcessor;
 import my.service.services.DDBTables;
 
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,54 +32,35 @@ public class RecurringController extends BaseController {
 
     private static final Logger log = LogManager.getLogger(RecurringController.class);
 
+    private final RecurringProcessor recurringProcessor = new RecurringProcessor();
+
     @RequestMapping(path = "/listRecurring", method = RequestMethod.GET)
     public List<Recurring> listRecurring(@RequestHeader("Authorization") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
-        log.info("RecurringController");
-        log.info("token " + token);
-
-        Date startTime = new Date();
-
-        String email = getUserEmail(token);
-        log.info("email: " + email);
-        log.info("scenarioId: " + scenarioId);
-
-        List<Recurring> listOfRecurrings = ddbService.queryTypesForUser(Recurring.class, email, scenarioId);
-        log.info(listOfRecurrings);
-
-        Date endTime = new Date();
-        log.info(
-                "RecurringController.listRecurring() Load Time: " +
-                 (endTime.getTime() - startTime.getTime()) + "ms");
-
-        return listOfRecurrings;
+        try {
+            log.info("RecurringController.listRecurring()");
+            String email = getUserEmail(token);
+            return recurringProcessor.listRecurrings(email, scenarioId);
+        } catch (Exception e) {
+            log.info("Error in DDBService.queryTypesForUser");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @RequestMapping(path = "/addRecurring", method = RequestMethod.POST)
     public MTAPIResponse addRecurring(@RequestHeader("Authorization") String token,
             @RequestBody AddRecurringRequest addRecurringRequest) throws Exception {
-        log.info("RecurringController.addRecurring()");
-
-        String email = getUserEmail(token);
-        log.info("email: " + email);
-        log.info("scenarioDataId: " + addRecurringRequest.scenarioDataId());
-
-        String id = UUID.randomUUID().toString();
-        String scenarioDataId = addRecurringRequest.scenarioDataId();
-        String type = "Recurring" + "#" + id;
-
-        Recurring recurring = new Recurring(
-                scenarioDataId,
-                type,
-                id,
-                addRecurringRequest.title(),
-                addRecurringRequest.startAge(),
-                addRecurringRequest.endAge(),
-                "EXPENSE".equals(addRecurringRequest.chargeType()) ? ChargeType.EXPENSE : ChargeType.INCOME,
-                addRecurringRequest.amount());
-
         try {
-            ddbService.putItem(Recurring.class, DDBTables.getDataTableName(), email, recurring);
+            log.info("RecurringController.addRecurring()");
+            String email = getUserEmail(token);
+            recurringProcessor.addRecurring(email,
+                    addRecurringRequest.scenarioId(),
+                    addRecurringRequest.title(),
+                    addRecurringRequest.startAge(),
+                    addRecurringRequest.endAge(),
+                    "EXPENSE".equals(addRecurringRequest.chargeType()) ? ChargeType.EXPENSE : ChargeType.INCOME,
+                    addRecurringRequest.amount());
             return new MTAPIResponse(true);
         } catch (Exception e) {
             log.info("Error in DDBService.addItem");
@@ -107,8 +87,8 @@ public class RecurringController extends BaseController {
                 updateRecurringRequest.title(),
                 updateRecurringRequest.startAge(),
                 updateRecurringRequest.endAge(),
-                "EXPENSE".equals(updateRecurringRequest.chargeType()) ? 
-                ChargeType.EXPENSE : ChargeType.INCOME,
+                "EXPENSE".equals(
+                        updateRecurringRequest.chargeType()) ? ChargeType.EXPENSE : ChargeType.INCOME,
                 updateRecurringRequest.amount());
 
         try {
@@ -124,14 +104,13 @@ public class RecurringController extends BaseController {
     @RequestMapping(path = "/deleteRecurring", method = RequestMethod.DELETE)
     public MTAPIResponse deleteRecurring(@RequestHeader("Authorization") String token,
             @RequestBody DeleteRecurringRequest deleteRecurringRequest) throws Exception {
-        log.info("RecurringController.deleteRecurring()");
-
-        String email = getUserEmail(token);
-        log.info("deleteRecurringRequest.scenarioDataId(): " + deleteRecurringRequest.scenarioDataId());
-        log.info("deleteRecurringRequest.type(): " + deleteRecurringRequest.type());
 
         try {
-            ddbService.deleteItem(Recurring.class, email, deleteRecurringRequest.scenarioDataId(),
+            log.info("RecurringController.deleteRecurring()");
+
+            String email = getUserEmail(token);
+            recurringProcessor.deleteRecurring(email,
+                    deleteRecurringRequest.scenarioDataId(),
                     deleteRecurringRequest.type());
             return new MTAPIResponse(true);
         } catch (Exception e) {

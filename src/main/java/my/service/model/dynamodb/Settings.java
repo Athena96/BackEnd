@@ -82,13 +82,18 @@ public class Settings implements IDeserializable<Settings>, ISerializable<Settin
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 String birthday = formatter.format(item.birthday);
 
-                serializeditem.put("scenarioDataId", AttributeValue.builder().s(item.scenarioDataId).build());
-                serializeditem.put("type", AttributeValue.builder().s(item.type.toString()).build());
-                serializeditem.put("birthday", AttributeValue.builder().s(birthday).build());
+                serializeditem.put("scenarioDataId", 
+                        AttributeValue.builder().s(item.scenarioDataId).build());
+                serializeditem.put("type", 
+                        AttributeValue.builder().s(item.type.toString()).build());
+                serializeditem.put("birthday", 
+                        AttributeValue.builder().s(birthday).build());
                 serializeditem.put("annualAssetReturnPercent",
-                                AttributeValue.builder().n(item.annualAssetReturnPercent.toString()).build());
+                                AttributeValue.builder().n(
+                                        item.annualAssetReturnPercent.toString()).build());
                 serializeditem.put("annualInflationPercent",
-                                AttributeValue.builder().n(item.annualInflationPercent.toString()).build());
+                                AttributeValue.builder().n(
+                                        item.annualInflationPercent.toString()).build());
 
                 return serializeditem;
 

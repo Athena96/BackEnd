@@ -10,6 +10,12 @@
 
     </module>
 
+    <module name="RegexpMultiline">
+        <property name="format" value="^\s*\n{2,}"/>
+        <property name="message" value="More than one empty line detected"/>
+        <property name="severity" value="warning"/>
+    </module>
+
     <module name="TreeWalker">
 
         <!-- Other checks remain under TreeWalker -->
@@ -33,5 +39,6 @@
         <module name="AvoidStarImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
+   
     </module>
 </module>

@@ -13,10 +13,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import my.service.model.Request.UpdateSettingsRequest;
 import my.service.model.Response.UpdateSettingsResponse;
 import my.service.model.dynamodb.Settings;
+import my.service.processors.SettingsProcessor;
 import my.service.services.DDBTables;
 
-import java.util.Date;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,27 +25,20 @@ public class SettingsController extends BaseController {
 
     private static final Logger log = LogManager.getLogger(SettingsController.class);
 
+    private final SettingsProcessor settingsProcessor = new SettingsProcessor();
+
     @RequestMapping(path = "/getSettings", method = RequestMethod.GET)
     public Settings getSettings(@RequestHeader("Authorization") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
-        log.info("SettingsController");
-        log.info("token: " + token);
-
-        Date startTime = new Date();
-
-        String email = getUserEmail(token);
-        log.info("email: " + email);
-        log.info("scenarioId: " + scenarioId);
-
-        List<Settings> listOfSettings = ddbService.queryTypesForUser(Settings.class, email, scenarioId);
-        log.info(listOfSettings);
-
-        Date endTime = new Date();
-        log.info(
-                "SettingsController.listSettings() Load Time: " + 
-                (endTime.getTime() - startTime.getTime()) + "ms");
-
-        return listOfSettings.get(0);
+        try {
+            log.info("SettingsController.getSettings()");
+            String email = getUserEmail(token);
+            return settingsProcessor.getSettings(email, scenarioId);
+        } catch (Exception e) {
+            log.info("Error in DDBService.queryTypesForUser");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @RequestMapping(path = "/updateSettings", method = RequestMethod.PUT)
