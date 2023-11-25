@@ -154,7 +154,7 @@ public class ScenarioProcessor extends BaseProcessor {
         String scenarioDataId = getScenarioDataId(email, scenarioId);
 
         // delete the scenario.
-        ddbService.deleteItem(Scenario.class, email, scenarioDataId, scenarioId);
+        ddbService.deleteItemScenario(Scenario.class, email, scenarioId);
 
         // get the data for the active scenario
         List<Assets> baseAssets = assetProcessor.listAssets(email, scenarioId);
