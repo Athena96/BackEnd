@@ -24,7 +24,7 @@ public class SettingsProcessor extends BaseProcessor {
 
     }
 
-    public void addSettings(
+    public Settings addSettings(
         String email, 
         String scenarioId, 
         Date birthday,
@@ -40,6 +40,7 @@ public class SettingsProcessor extends BaseProcessor {
                 annualInflationPercent);
             ddbService.putItem(Settings.class, DDBTables.getDataTableName(), email, settings);
             log.info("added settings do DDB: " + settings);
+            return settings;
     }
 
     public void deleteSettings(String email, String scenarioDataId, String type) {

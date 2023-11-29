@@ -17,6 +17,7 @@ import my.service.model.dynamodb.Recurring;
 import my.service.model.dynamodb.Scenario;
 import my.service.model.dynamodb.Settings;
 import my.service.processors.ScenarioProcessor;
+import my.service.processors.SettingsProcessor;
 import my.service.services.StockService;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
@@ -24,6 +25,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import java.util.List;
@@ -121,7 +123,6 @@ public class ScenariosDataController extends BaseController {
                                         break;
                                 case Settings:
                                         // Parse Settings
-
                                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                                         Date birthday = formatter.parse(item.get("birthday").s());
 
@@ -149,6 +150,20 @@ public class ScenariosDataController extends BaseController {
                                         break;
                         }
 
+                }
+
+                if (settings == null) {
+                        log.info("User does not have settings, adding default settings");
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.YEAR, -30);
+                        Date dateThirtyYearsAgo = calendar.getTime();
+                        SettingsProcessor settingsProcessor = new SettingsProcessor();
+                        settings = settingsProcessor.addSettings(
+                                email, 
+                        activeScenarioID, 
+                        dateThirtyYearsAgo, 
+                        11.77, 
+                        3.96);
                 }
 
                 ScenarioDataResponse scenarioDataResponse = new ScenarioDataResponse(

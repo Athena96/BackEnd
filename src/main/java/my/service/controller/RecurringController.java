@@ -114,7 +114,7 @@ public class RecurringController extends BaseController {
                     deleteRecurringRequest.type());
             return new MTAPIResponse(true);
         } catch (Exception e) {
-            log.info("Error in DDBService.addItem");
+            log.info("Error in deleteRecurring()");
             e.printStackTrace();
             return new MTAPIResponse(false);
         }
