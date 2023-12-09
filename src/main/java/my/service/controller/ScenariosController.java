@@ -26,10 +26,11 @@ public class ScenariosController extends BaseController {
 
     private static final Logger log = LogManager.getLogger(ScenariosController.class);
 
-    private final ScenarioProcessor scenarioProcessor = new ScenarioProcessor();
+    private final ScenarioProcessor scenarioProcessor = new ScenarioProcessor(super.ddbService, this.dynamoDbClient);
 
     @RequestMapping(path = "/listScenarios", method = RequestMethod.GET)
-    public List<Scenario> listScenarios(@RequestHeader("Authorization") String token) throws Exception {
+    public List<Scenario> listScenarios(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token) throws Exception {
 
         log.info("ScenariosController");
 
@@ -46,7 +47,8 @@ public class ScenariosController extends BaseController {
     }
 
     @RequestMapping(path = "/addScenario", method = RequestMethod.POST)
-    public Scenario addScenario(@RequestHeader("Authorization") String token,
+    public Scenario addScenario(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody AddScenarioRequest addScenarioRequest) throws Exception {
         log.info("ScenariosController.addScenario()");
         String email = getUserEmail(token);
@@ -56,7 +58,8 @@ public class ScenariosController extends BaseController {
     }
 
     @RequestMapping(path = "/changeActiveScenario", method = RequestMethod.PUT)
-    public void changeActiveScenario(@RequestHeader("Authorization") String token,
+    public void changeActiveScenario(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody ChangeActiveScenarioRequest changeActiveScenarioRequest) throws Exception {
         try {
             log.info("ScenariosController.changeActiveScenario()");
@@ -70,7 +73,8 @@ public class ScenariosController extends BaseController {
     }
 
     @RequestMapping(path = "/updateScenario", method = RequestMethod.PUT)
-    public void updateScenario(@RequestHeader("Authorization") String token,
+    public void updateScenario(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody UpdateScenarioRequest updateScenarioRequest) throws Exception {
         try {
             log.info("ScenariosController.updateScenario()");
@@ -86,7 +90,8 @@ public class ScenariosController extends BaseController {
     }
 
     @RequestMapping(path = "/deleteScenario", method = RequestMethod.DELETE)
-    public void deleteScenario(@RequestHeader("Authorization") String token,
+    public void deleteScenario(@RequestHeader("Authorization") String accessToken,
+     @RequestHeader("idtoken") String token,
             @RequestBody DeleteScenarioRequest deleteScenarioRequest) throws Exception {
         try {
             log.info("ScenariosController.deleteScenario()");

@@ -29,10 +29,11 @@ import org.apache.logging.log4j.Logger;
 public class AssetsController extends BaseController {
     private static final Logger log = LogManager.getLogger(AssetsController.class);
 
-    private final AssetProcessor assetProcessor = new AssetProcessor();
+    private final AssetProcessor assetProcessor = new AssetProcessor(ddbService);
 
     @RequestMapping(path = "/listAssets", method = RequestMethod.GET)
-    public List<Assets> listAssets(@RequestHeader("Authorization") String token,
+    public List<Assets> listAssets(@RequestHeader("Authorization") String accessToken,
+     @RequestHeader("idtoken") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
         try {
             log.info("AssetsController.listAssets()");
@@ -46,7 +47,8 @@ public class AssetsController extends BaseController {
     }
 
     @RequestMapping(path = "/addAsset", method = RequestMethod.POST)
-    public AddAssetResponse addAsset(@RequestHeader("Authorization") String token,
+    public AddAssetResponse addAsset(@RequestHeader("Authorization") String accessToken,
+     @RequestHeader("idtoken") String token,
             @RequestBody AddAssetRequest addAssetRequest) throws Exception {
         try {
             log.info("AssetsController.addAsset()");
@@ -65,7 +67,8 @@ public class AssetsController extends BaseController {
     }
 
     @RequestMapping(path = "/updateAsset", method = RequestMethod.PUT)
-    public UpdateAssetResponse updateAsset(@RequestHeader("Authorization") String token,
+    public UpdateAssetResponse updateAsset(@RequestHeader("Authorization") String accessToken,
+     @RequestHeader("idtoken") String token,
             @RequestBody UpdateAssetRequest updateAssetRequest) throws Exception {
         log.info("AssetsController.updateAsset()");
         String email = getUserEmail(token);
@@ -89,7 +92,8 @@ public class AssetsController extends BaseController {
     }
 
     @RequestMapping(path = "/deleteAsset", method = RequestMethod.DELETE)
-    public DeleteAssetResponse deleteAsset(@RequestHeader("Authorization") String token,
+    public DeleteAssetResponse deleteAsset(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody DeleteAssetRequest deleteAssetRequest) throws Exception {
 
         try {

@@ -40,10 +40,11 @@ public class ScenariosDataController extends BaseController {
 
         private static final Logger log = LogManager.getLogger(ScenariosDataController.class);
 
-        ScenarioProcessor scenarioProcessor = new ScenarioProcessor();
+        ScenarioProcessor scenarioProcessor = new ScenarioProcessor(this.ddbService, this.dynamoDbClient);
 
         @RequestMapping(path = "/getScenarioData", method = RequestMethod.GET)
-        public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String token) throws Exception {
+        public ScenarioDataResponse getScenarioData(@RequestHeader("Authorization") String accessToken,
+         @RequestHeader("idtoken") String token) throws Exception {
 
                 Date startTime = new Date();
                 log.info("DataControllerdd");
@@ -157,7 +158,7 @@ public class ScenariosDataController extends BaseController {
                         Calendar calendar = Calendar.getInstance();
                         calendar.add(Calendar.YEAR, -30);
                         Date dateThirtyYearsAgo = calendar.getTime();
-                        SettingsProcessor settingsProcessor = new SettingsProcessor();
+                        SettingsProcessor settingsProcessor = new SettingsProcessor(this.ddbService);
                         settings = settingsProcessor.addSettings(
                                 email, 
                         activeScenarioID, 

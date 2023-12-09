@@ -7,11 +7,17 @@ import org.apache.logging.log4j.Logger;
 
 import my.service.model.ChargeType;
 import my.service.model.dynamodb.Recurring;
+import my.service.services.DDBService;
 import my.service.services.DDBTables;
 
 public class RecurringProcessor extends BaseProcessor {
     private static final Logger log = LogManager.getLogger(RecurringProcessor.class);
 
+    private final DDBService ddbService;
+    public RecurringProcessor( DDBService ddbService) {
+        log.info("RecurringProcessor");
+        this.ddbService = ddbService;
+    }
     public List<Recurring> listRecurrings(String email, String scenarioId) throws Exception {
         List<Recurring> listOfRecurrings = ddbService.queryTypesForUser(
             Recurring.class, 

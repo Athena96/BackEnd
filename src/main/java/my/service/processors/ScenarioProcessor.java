@@ -1,6 +1,7 @@
 package my.service.processors;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,7 +13,9 @@ import my.service.model.dynamodb.Assets;
 import my.service.model.dynamodb.Recurring;
 import my.service.model.dynamodb.Scenario;
 import my.service.model.dynamodb.Settings;
+import my.service.services.DDBService;
 import my.service.services.DDBTables;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -21,19 +24,31 @@ public class ScenarioProcessor extends BaseProcessor {
 
     private static final Logger log = LogManager.getLogger(ScenarioProcessor.class);
 
-    AssetProcessor assetProcessor = new AssetProcessor();
-    RecurringProcessor recurringProcessor = new RecurringProcessor();
-    SettingsProcessor settingsProcessor = new SettingsProcessor();
+    private final DDBService ddbService;
+    private final DynamoDbClient dynamoDbClient;
+    private final AssetProcessor assetProcessor;
+    private final RecurringProcessor recurringProcessor;
+    private final SettingsProcessor settingsProcessor;
+
+    public ScenarioProcessor(DDBService ddbService, DynamoDbClient dynamoDbClient) {
+        log.info("ScenarioProcessor");
+        this.ddbService = ddbService;
+        this.dynamoDbClient = dynamoDbClient;
+        this.assetProcessor = new AssetProcessor(ddbService);
+        this.recurringProcessor = new RecurringProcessor(ddbService);
+        this.settingsProcessor = new SettingsProcessor(ddbService);
+    }
 
     public List<Scenario> listScenarios(String email) throws Exception {
-            log.info("listScenarios ");
+        Date startTime = new Date();
+        log.info("listScenarios ");
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(System.getenv("SCENARIO_TABLE"))
                 .keyConditionExpression("email = :emailValue")
                 .expressionAttributeValues(Map.of(":emailValue", AttributeValue.builder().s(email).build()))
                 .build();
-            log.info("queryRequest " + queryRequest);
+        log.info("queryRequest " + queryRequest);
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
@@ -51,7 +66,8 @@ public class ScenarioProcessor extends BaseProcessor {
             listOfScenarios.add(scenario);
         }
         log.info(listOfScenarios);
-
+        Date endTime = new Date();
+        log.info("listScenarios Load Time: " + (endTime.getTime() - startTime.getTime()) + "ms");
         return listOfScenarios;
     }
 
@@ -153,10 +169,7 @@ public class ScenarioProcessor extends BaseProcessor {
     public void deleteScenario(String email, String scenarioId) throws Exception {
         String scenarioDataId = getScenarioDataId(email, scenarioId);
 
-        // delete the scenario.
-        ddbService.deleteItemScenario(Scenario.class, email, scenarioId);
-
-        // get the data for the active scenario
+        // get the data for the scenarioid
         List<Assets> baseAssets = assetProcessor.listAssets(email, scenarioId);
         List<Recurring> baseRecurrings = recurringProcessor.listRecurrings(email, scenarioId);
         Settings baseSettings = settingsProcessor.getSettings(email, scenarioId);
@@ -175,7 +188,9 @@ public class ScenarioProcessor extends BaseProcessor {
 
         settingsProcessor.deleteSettings(email, scenarioDataId, baseSettings.type);
         log.info("deleted copies of Settings for deleted scenario");
-    
+
+        ddbService.deleteItemScenario(Scenario.class, email, scenarioId);
+        log.info("finally delete the scenario.");
     }
 
 }

@@ -6,12 +6,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import my.service.model.dynamodb.Assets;
+import my.service.services.DDBService;
 import my.service.services.DDBTables;
 
 public class AssetProcessor extends BaseProcessor {
     private static final Logger log = LogManager.getLogger(AssetProcessor.class);
 
-    
+    private final DDBService ddbService;
+    public AssetProcessor(DDBService ddbService) {
+        log.info("AssetProcessor");
+        this.ddbService = ddbService;
+    }
     public List<Assets> listAssets(String email, String scenarioId) throws Exception {
         List<Assets> listOfAssets = ddbService.queryTypesForUser(Assets.class, email, scenarioId);
         log.info("loaded " + listOfAssets.size() + " assets from ddb");

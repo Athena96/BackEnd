@@ -32,10 +32,11 @@ public class RecurringController extends BaseController {
 
     private static final Logger log = LogManager.getLogger(RecurringController.class);
 
-    private final RecurringProcessor recurringProcessor = new RecurringProcessor();
+    private final RecurringProcessor recurringProcessor = new RecurringProcessor(this.ddbService);
 
     @RequestMapping(path = "/listRecurring", method = RequestMethod.GET)
-    public List<Recurring> listRecurring(@RequestHeader("Authorization") String token,
+    public List<Recurring> listRecurring(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
         try {
             log.info("RecurringController.listRecurring()");
@@ -49,7 +50,8 @@ public class RecurringController extends BaseController {
     }
 
     @RequestMapping(path = "/addRecurring", method = RequestMethod.POST)
-    public MTAPIResponse addRecurring(@RequestHeader("Authorization") String token,
+    public MTAPIResponse addRecurring(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody AddRecurringRequest addRecurringRequest) throws Exception {
         try {
             log.info("RecurringController.addRecurring()");
@@ -70,7 +72,8 @@ public class RecurringController extends BaseController {
     }
 
     @RequestMapping(path = "/updateRecurring", method = RequestMethod.PUT)
-    public MTAPIResponse updateRecurring(@RequestHeader("Authorization") String token,
+    public MTAPIResponse updateRecurring(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody UpdateRecurringRequest updateRecurringRequest) throws Exception {
         log.info("RecurringController.updateRecurring()");
 
@@ -102,7 +105,8 @@ public class RecurringController extends BaseController {
     }
 
     @RequestMapping(path = "/deleteRecurring", method = RequestMethod.DELETE)
-    public MTAPIResponse deleteRecurring(@RequestHeader("Authorization") String token,
+    public MTAPIResponse deleteRecurring(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody DeleteRecurringRequest deleteRecurringRequest) throws Exception {
 
         try {

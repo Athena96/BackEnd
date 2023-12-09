@@ -7,10 +7,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import my.service.model.dynamodb.Settings;
+import my.service.services.DDBService;
 import my.service.services.DDBTables;
 
 public class SettingsProcessor extends BaseProcessor {
     private static final Logger log = LogManager.getLogger(SettingsProcessor.class);
+
+    private final DDBService ddbService;
+
+    public SettingsProcessor(DDBService ddbService) {
+        log.info("SettingsProcessor");
+        this.ddbService = ddbService;
+
+    }
 
     public Settings getSettings(String email, String scenarioId) throws Exception {
         List<Settings> listOfSettings = ddbService.queryTypesForUser(Settings.class, email, scenarioId);
@@ -25,22 +34,22 @@ public class SettingsProcessor extends BaseProcessor {
     }
 
     public Settings addSettings(
-        String email, 
-        String scenarioId, 
-        Date birthday,
-        Double annualAssetReturnPercent,
-        Double annualInflationPercent ) {
-            String scenarioDataId = getScenarioDataId(email, scenarioId);
-            String type = "Settings";
-            Settings settings = new Settings(
+            String email,
+            String scenarioId,
+            Date birthday,
+            Double annualAssetReturnPercent,
+            Double annualInflationPercent) {
+        String scenarioDataId = getScenarioDataId(email, scenarioId);
+        String type = "Settings";
+        Settings settings = new Settings(
                 scenarioDataId,
                 type,
                 birthday,
                 annualAssetReturnPercent,
                 annualInflationPercent);
-            ddbService.putItem(Settings.class, DDBTables.getDataTableName(), email, settings);
-            log.info("added settings do DDB: " + settings);
-            return settings;
+        ddbService.putItem(Settings.class, DDBTables.getDataTableName(), email, settings);
+        log.info("added settings do DDB: " + settings);
+        return settings;
     }
 
     public void deleteSettings(String email, String scenarioDataId, String type) {

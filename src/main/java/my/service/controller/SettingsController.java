@@ -25,10 +25,11 @@ public class SettingsController extends BaseController {
 
     private static final Logger log = LogManager.getLogger(SettingsController.class);
 
-    private final SettingsProcessor settingsProcessor = new SettingsProcessor();
+    private final SettingsProcessor settingsProcessor = new SettingsProcessor(this.ddbService);
 
     @RequestMapping(path = "/getSettings", method = RequestMethod.GET)
-    public Settings getSettings(@RequestHeader("Authorization") String token,
+    public Settings getSettings(@RequestHeader("Authorization") String accessToken,
+     @RequestHeader("idtoken") String token,
             @RequestParam(name = "scenarioId", required = true) String scenarioId) throws Exception {
         try {
             log.info("SettingsController.getSettings()");
@@ -42,7 +43,8 @@ public class SettingsController extends BaseController {
     }
 
     @RequestMapping(path = "/updateSettings", method = RequestMethod.PUT)
-    public UpdateSettingsResponse updateSettings(@RequestHeader("Authorization") String token,
+    public UpdateSettingsResponse updateSettings(@RequestHeader("Authorization") String accessToken, 
+    @RequestHeader("idtoken") String token,
             @RequestBody UpdateSettingsRequest updateSettingsRequest) throws Exception {
         log.info("SettingsController.updateSettings()");
 
